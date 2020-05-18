@@ -1,0 +1,818 @@
+/* header */
+.header {
+    width: 100%;
+    height: 80px;
+    background-color: #5E5E5E;
+}
+
+.header-title {
+    display: inline-block;
+    text-align: center;
+    padding-top: 25px;
+}
+
+.header-title-text {
+    font-size: 20px;
+    color: #FFFFFF
+}
+
+.arrow-return {
+    display: inline-block;
+    position: absolute;
+    left: 10px;
+    top: 15px;
+}
+
+/* login */
+.login-title {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+.login-title-text {
+    position: absolute;
+    padding-left: 10px;
+    font-size: 25px;
+}
+
+.text-center {
+    overflow: hidden;
+    position: relative;
+    background: rgb(255, 255, 255);
+    width: 360px;
+    height: 600px;
+    margin: 0 auto;
+    text-align: center !important;
+}
+
+.loginbody {
+    align-items: center;
+    padding-top: 40px;
+    padding-bottom: 40px;
+    background-color: #f5f5f5;
+}
+
+.form-signin {
+    width: 100%;
+    max-width: 350px;
+    padding-right: 15px;
+    padding-left: 30px;
+    margin: 100px auto;
+}
+
+.form-signin input[type="text"],
+.form-signin input[type="password"] {
+    margin-bottom: -1px;
+    border-bottom-right-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.form-signin .form-control {
+    position: relative;
+    box-sizing: border-box;
+    height: auto;
+    padding: 10px;
+    font-size: 16px;
+}
+
+.logintext {
+    font-family: HanSans;
+    margin: 0px -20px;
+    padding-bottom: 100px;
+}
+
+.login-table {
+    width: 100%;
+
+}
+
+.login-inputs {
+    padding: 0px 30px;
+}
+
+.login-btn-box {}
+
+.login-btn {
+    font-size: 18px;
+    width: 80px;
+    margin-left: 10px;
+    height: 60px;
+    background-color: #5E5E5E;
+    color: rgb(255, 255, 255);
+}
+
+.login-other-buttons {}
+
+.finduser-btn {
+    background-color: #E9ECEF;
+    font-size: 12px;
+}
+
+.register-btn {
+    background-color: #E9ECEF;
+    font-size: 12px;
+}
+
+/* register */
+.register-title {
+    text-align: center;
+    padding: 0px 10px;
+}
+
+.register-title-background {
+    background-color: #E0E0E0;
+    width: 180px;
+    height: 30px;
+    border-radius: 10px;
+    margin: 10px 0px;
+}
+
+.register-title-text {
+    font-size: 14px;
+    font-weight: bold;
+}
+
+.register-box {
+    margin-left: 10px;
+    margin-right: 10px;
+    text-align: left;
+    border: 1px solid #E0E0E0;
+    border-radius: 10px;
+}
+
+.register-inbox {
+    margin-left: 5px;
+    margin-right: 5px;
+    padding: 10px 10px;
+}
+
+.register-inbox label {
+    width: 120px;
+}
+
+.register-inbox input {
+    width: 110px;
+}
+
+.register-inbox a {
+    font-size: 10px;
+    color: #000000;
+    border-color: #E3E3E3;
+    background-color: #E3E3E3;
+}
+
+.register-btn2-box {
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+.register-btn2 {
+    margin-top: 10px;
+    width: 100%;
+    font-size: 16px;
+    color: #FFFFFF;
+    background-color: #404040;
+}
+
+/* find account */
+.findaccount-img {
+    margin: 10px 10px;
+}
+
+.findingaccount-two-buttons {
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.finduserid-btn {
+    background-color: #000000;
+    border-radius: 10px;
+    width: 150px;
+    color: #FFFFFF;
+    font-size: 14px;
+}
+
+.findpasswd-btn {
+    background-color: #E0E0E0;
+    border-radius: 10px;
+    width: 150px;
+    color: #FFFFFF;
+    font-size: 14px;
+}
+
+/* main */
+.main-header {
+    overflow: hidden;
+}
+
+.mypage-btn {
+    width: 50px;
+    height: 50px;
+    float: left;
+}
+
+.search-bar {
+    height: 50px;
+    width: 310px;
+    float: left;
+    border-top: 2px solid #EDEDED;
+    border-bottom: 2px solid #EDEDED;
+    border-right: 2px solid #EDEDED;
+}
+
+.search-icon {
+    float: left;
+    width: 50px;
+    height: 50px;
+    padding-top: 8px;
+    background-color: #EDEDED;
+    border-radius: 5px;
+}
+
+.search-text {
+    float: left;
+}
+
+.search-text>input {
+    height: 45px;
+    width: 250px;
+    margin-top: 1px;
+    margin-bottom: 2px;
+    margin-left: 5px;
+    border-style: none;
+}
+
+.main-header-buttons {
+    overflow: hidden;
+}
+
+.view-all-group {
+    float: left;
+    font-size: 10px;
+}
+
+.create-group {
+    float: right;
+    background-color: #EDEDED;
+    color: black;
+    font-size: 10px;
+    border-style: none;
+}
+
+.main-group-layout {
+    max-height: 520px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.group-info {
+    height: 60px;
+    width: 360px;
+    border-bottom: 1px solid #EDEDED;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.group-image-small {
+    width: 40px;
+    height: 40px;
+    margin: 10px;
+    background-color: #EDEDED;
+    float: left;
+}
+
+.group-image-small>img {
+    width: 40px;
+    height: 40px;
+}
+
+.group-details-small {
+    float: left;
+    width: 290px;
+    height: 45px;
+    margin: 5px;
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+.group-details-small>ul {
+    list-style: none;
+}
+
+.theme,
+.datetime,
+.location,
+.title {
+    float: left;
+    position: relative;
+    left: -30px;
+}
+
+.title {
+    display: block;
+}
+
+.theme-img,
+.datetime-img,
+.location-img {
+    float: left;
+    margin-top: 2px;
+    margin-right: 4px;
+    width: 17px;
+    height: 17px;
+    border-radius: 50px;
+    background-color: #EDEDED;
+}
+
+.datetime-img,
+.location-img {
+    margin-left: 10px;
+}
+
+.group-info-bar {
+    text-align: center;
+    border-bottom: 2px solid #EDEDED;
+    padding: 3px;
+}
+
+.group-details {
+    clear: both;
+    height: 300px;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.group-image {
+    margin: 10px 15px;
+    height: 150px;
+    background-color: #EDEDED;
+}
+
+.group-image>img {
+    height: 150px;
+}
+
+.group-content {
+    margin: 10px 15px;
+    text-align: left;
+}
+
+.main-footer-buttons {
+    text-align: center;
+}
+
+.join-group-btn {
+    border-radius: 5px;
+    background-color: #5E5E5E;
+    color: #FFFFFF;
+    width: 50%;
+    float: left;
+}
+.waiting-group-btn{
+    border-radius: 5px;
+    background-color: #5E5E5E;
+    color: #FFFFFF;
+    width: 50%;
+    float: left;
+    cursor: default;
+}
+.enrolled-group-btn{
+    border-radius: 5px;
+    background-color: #5E5E5E;
+    color: #FFFFFF;
+    width: 50%;
+    float: left;
+}
+.close-details-btn {
+    border-radius: 5px;
+    background-color: #EDEDED;
+    color: #000000;
+    border-color: #EDEDED;
+    width: 50%;
+}
+
+/* create group */
+.create-group-layout {
+    width: 100%;
+    height: 550px;
+    position: absolute;
+    top: 50px;
+    background-color: #E0E0E0;
+    z-index: 1;
+    text-align: left;
+    display: none;
+}
+
+.create-group-layout input {
+    margin: 5px 0px;
+}
+
+/* mypage */
+.list-group-item.active {
+    color: black;
+    background-color: #E0E0E0;
+    border-color: #C2C2C2;
+}
+
+.edit-profile {
+    border: 1px solid #DFDFDF;
+    border-radius: 20px;
+    margin: 20px;
+}
+
+.mypage-bottom-btn button,
+.mypage-bottom-btns button {
+    background-color: #9E9E9E;
+    border-color: #9E9E9E;
+}
+
+.mypage-save-btn {
+    margin: 0 auto;
+    margin-bottom: 10px;
+}
+
+.mypage-logout-btn {
+    margin-right: 120px;
+}
+
+.edit-grouplist-container {
+    display: none;
+}
+
+.edit-alarmsetting-container {
+    display: none;
+}
+
+.email-alarm {
+    width: 300px;
+    margin: 20px auto;
+    background-color: black;
+    height: 50px;
+    color: white;
+}
+
+.custom-control-label::before {
+    width: 45px !important;
+    height: 1.5rem;
+    border-radius: 15px !important;
+}
+
+.custom-control-label::after {
+    width: 20px !important;
+    height: 20px !important;
+}
+
+.custom-switch .custom-control-input:checked~.custom-control-label::after {
+    transform: translateX(1.5rem);
+}
+/* mypage second section */
+.group-btns button{
+    float:left;
+    margin: 10px;
+    font-size: 12px;
+}
+.join-group{
+    background-color:#5E5E5E;
+    border-color:#5E5E5E;
+}
+.request-group{
+    background-color:#E0E0E0;
+    border-color:#E0E0E0;
+}
+.mypage-grouplist-box1{
+    border: 1px solid #DEDEDE;
+    float:left;
+    width:340px;
+    height: 60px;
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow: hidden;
+}
+.mypage-grouplist-box2{
+    border: 1px solid #DEDEDE;
+    float:left;
+    width:340px;
+    height: 60px;
+    margin-left: 10px;
+    margin-right: 10px;
+    overflow: hidden;
+    display:none;
+}
+.mypage-grouplist-image{
+    background-color: #EDEDED;
+    width: 40px;
+    height: 40px;
+    margin: 10px 10px;
+    float:left;
+}
+.mypage-grouplist-image img{
+    width: 40px;
+    height: 40px;
+}
+.mypage-grouplist-title{
+    float:left;
+    width: 220px;
+    height: 30px;
+    margin-top: 12px;
+    font-size: 14px;
+    text-align: left;
+}
+.mypage-grouplist-leave{
+    margin-top: 12px;
+}
+.mypage-grouplist-leave button{
+    border-color: #97A4A3;
+    background-color: #97A4A3;
+    color: white;
+    width: 52px;
+    height: 31px;
+    font-size:13px;
+}
+.edit-grouplist-container{
+    overflow-y: auto;
+    height: 470px;
+}
+::-webkit-scrollbar {
+  width: 8px;  /* 세로축 스크롤바 길이 */
+  height: 8px;  /* 가로축 스크롤바 길이 */
+}
+::-webkit-scrollbar-track {
+  background-color: lightblue;
+}
+::-webkit-scrollbar-track-piece {
+  background-color: gray;
+}
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background-color: #DEDEDE;
+}
+::-webkit-scrollbar-button {
+  background-color: darkblue;
+  width: 20px;
+  height: 10px;
+}
+::-webkit-scrollbar-button:start {
+  background-color: #EDEDED; /* Top, Left 방향의 이동버튼 */
+}
+::-webkit-scrollbar-button:end {
+  background-color: #EDEDED; /* Bottom, Right 방향의 이동버튼 */
+}
+::-webkit-scrollbar-button:vertical:increment {
+}
+::-webkit-scrollbar-button:vertical:decrement {
+}
+::-webkit-scrollbar-corner {
+  background-color: #EDEDED; /* 우측 하단의 코너 부분 */
+}
+::-webkit-resizer {
+  background-color: #EDEDED;
+}
+.mypage-grouplist-wait{
+    font-size: 12px;
+    cursor:default;
+    position: relative;
+    top:-10px;
+}
+/* group setting */
+.enrolled-list-box{
+    border: 1px solid #E3E3E3;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    max-height: 380px;
+    overflow-y: auto;
+}
+.enrolled-list-box div{
+    margin-bottom: 5px;
+    overflow:hidden;
+}
+.enrolled-name{
+    float:left;
+}
+.enrolled-input{
+    float:right;
+    margin: 6px;
+}
+.gset-btns{
+    float:right;
+}
+.kick-btn{
+    margin-right: 10px;
+    font-size: 12px;
+}
+.leave-owner-btn{
+    margin-right: 10px;
+    font-size: 12px;
+}
+.joined-list-box{
+    border: 1px solid #E3E3E3;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    max-height: 380px;
+    overflow-y: auto;
+}
+.joined-list-box div{
+    margin-bottom: 5px;
+    overflow:hidden;
+}
+.joined-name{
+    float:left;
+}
+.joined-input{
+    float:right;
+    margin: 6px;
+}
+.accept-btn{
+    margin-right: 10px;
+    font-size: 12px;
+}
+.reject-btn{
+    margin-right: 10px;
+    font-size: 12px;
+}
+.content-save-btn{
+    margin-right: 10px;
+    font-size: 12px;
+}
+.detail-edit-box{
+    border: 1px solid #E3E3E3;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 10px;
+    height: 420px;
+    text-align: left;
+    overflow-y: auto;
+}
+.detail-edit-box input{
+    margin: 10px 0px;
+}
+/* --------G Main */
+.group-setting {
+    display: inline-block;
+    position: absolute;
+    right: 10px;
+    top: 15px;
+}
+
+.group-header {
+    width: 100%;
+    height: 120px;
+    background-color: #E0E0E0;
+}
+
+.best-book{
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid #A2A2A2;
+    font-size:12px;
+}
+.gbutton{
+    background: #E0E0E0 !important;
+    border-radius: 15px !important;
+    font-size: 12px !important;
+    width: 75%;
+}
+
+.gmember{
+    overflow-y:auto;
+    width:75%;
+    height:100px;
+    border: 1px solid #A2A2A2;
+    font-size: 12px;
+}
+
+.glist{
+    text-indent: -30px
+}
+.notify{
+    border-top: 1px solid #dfdfdf;
+    border-bottom: 1px solid #dfdfdf;
+    overflow: auto;
+}
+.notify-content{
+    overflow:auto;
+    height:100px;
+    background: #E0E0E0;
+    margin: 20px;
+}
+.notify-contents{
+    font-size: 12px;
+}
+.gname{
+    position: absolute;
+    top: 30px;
+    left: 70px;
+    font-size: 16px;
+    text-align: left;
+    max-width: 200px;
+}
+.group-button{
+    position: absolute;
+    right:15px;
+    top: 80px;
+}
+
+
+.chat-header {
+    width: 100%;
+    height: 70px;
+    background-color: #5E5E5E;
+}
+.vote-input{
+    background: #dfdfdf;
+    width:170px;
+    border: none;
+    color: black;
+}
+/* group setting - notice */
+.notice-list-box{ /* 공지사항 목록과 폼 */
+    margin-top: -0.5rem!important;
+}
+.notice-table-div{
+    height: 120px;
+    width: 352px;
+    overflow: auto;
+    border-bottom: 1px solid #DDDCDE;
+}
+.notice-table{ /* 최근 공지사항 목록 */
+    border-top: 1px solid #DDDCDE;
+    width: 500px;
+}
+.notice-table thead{
+    background-color: #EAEAEA;
+}
+.notice-table td, .notice-table th{
+    padding: 1px;
+    font-size:14px;
+    text-align: left;
+}
+.notice-post-box{ /* 공지사항 작성 폼 */
+    border: 1px solid #D0D0D0;
+    border-radius: 10px;
+    margin: 10px;
+    height: 340px;
+}
+.notice-post-box .form-group{
+    margin-bottom: 1px!important;
+    margin-left: 5px;
+    margin-right: 5px;
+}
+.notice-bottom-buttons{
+    border-top: 1px solid #D0D0D0;
+    margin-top: 5px;
+}
+.notice-bottom-buttons button{
+    margin: 5px;
+}
+/* gmain - present */
+.custom-file-label::after{
+    content: "+ 파일첨부"!important;
+}
+.custom-file{
+    margin-top: 20px;
+}
+/* vote */
+.add-item {
+    background: #DFDFDF;
+    font-size:12px;
+}
+:after, :before {
+-webkit-box-sizing: border-box;
+-moz-box-sizing: border-box;
+box-sizing: border-box;
+}
+.nice-nav {
+position: absolute;
+display: none;
+z-index: 1;
+width: 250px;
+background:#CCCCCC;
+height: 100%;
+float:left;
+left:0;
+top:0;
+bottom: 0;
+
+}
+.nice-nav.open {
+margin-left: -250px;
+}
+.vote-list a, .chat-header a, .chat-avatar a, {
+cursor: pointer;
+}
+.create-vote-end{
+    margin-top: 100px;
+}
+.create-vote{
+    height: 70%; overflow-y: auto; background: #444; border-radius: 20px; text-align: left; display: none;
+}
+.vitem1, .vitem2, .vitem3{
+    overflow:hidden;
+}
+.vitem1-text, .vitem2-text, .vitem3-text{
+    float: left;
+}
+.vitem1-cnt, .vitem2-cnt, .vitem3-cnt{
+    float: right;
+}

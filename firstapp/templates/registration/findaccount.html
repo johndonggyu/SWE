@@ -1,0 +1,180 @@
+<!-- templates/registration/register.html -->
+{% extends 'base.html' %}
+{% block title %}Find Account{% endblock %}
+{% block content %}
+<script type="text/javascript">
+$(function() {
+    if ("{{found_userid}}".length != 0) {
+        alert("{{found_userid}}");
+    }
+    if ("{{found_passwd}}".length != 0) {
+        alert("{{found_passwd}}");
+    }
+    $('.finduserid-btn').click(function() {
+        $('#find_userid').val(1);
+        $('#find_passwd').val(0);
+        $('.findpasswd-btn').css('background-color', '#E0E0E0');
+        $('.finduserid-btn').css('background-color', '#000000');
+    });
+    $('.findpasswd-btn').click(function() {
+        $('#find_userid').val(0);
+        $('#find_passwd').val(1);
+        $('.findpasswd-btn').css('background-color', '#000000');
+        $('.finduserid-btn').css('background-color', '#E0E0E0');
+    });
+    $("#auth_method1").click(function() {
+        $('.find-email-box').css('display', 'none');
+        $('.find-tel-box').css('display', 'block');
+    })
+    $('#auth_method2').click(function() {
+        $('.find-tel-box').css('display', 'none');
+        $('.find-email-box').css('display', 'block');
+    })
+    $('.finduserid-btn').click(function() {
+        $('.find-id-box').css('display', 'none');
+    })
+    $('.findpasswd-btn').click(function() {
+        $('.find-id-box').css('display', 'block');
+    })
+})
+
+function findaccount() {
+    //아이디 찾기 시
+    if ($('.find-id-box').css("display") == "none") {
+        //핸드폰 인증 시
+        if ($('.find-email-box').css('display') == 'none') {
+            //이름과 핸드폰 입력 값 검사
+            if ($('#name').val() == '') {
+                alert('이름을 입력해주세요.');
+                $('#name').focus();
+                return false;
+            }
+            if ($('#tel').val() == '') {
+                alert('핸드폰을 입력해주세요.');
+                $('#tel').focus();
+                return false;
+            }
+        }
+        //이메일 인증 시
+        if ($('.find-tel-box').css('display') == 'none') {
+            //이름과 이메일 입력 값 검사
+            if ($('#name').val() == '') {
+                alert('이름을 입력해주세요.');
+                $('#name').focus();
+                return false;
+            }
+            if ($('#email').val() == '') {
+                alert('이메일을 입력해주세요.');
+                $('#email').focus();
+                return false;
+            }
+        }
+        document.form.submit();
+    }
+
+    //비밀번호 찾기 시
+    if ($('.find-id-box').css('display') != 'none') {
+        //핸드폰 인증 시
+        if ($('.find-email-box').css('display') == 'none') {
+            //아이디와 이름과 핸드폰 입력 값 검사
+            if ($('#userid').val() == '') {
+                alert('아이디를 입력해주세요.');
+                $('#userid').focus();
+                return;
+            }
+            if ($('#name').val() == '') {
+                alert('이름을 입력해주세요.');
+                $('#name').focus();
+                return false;
+            }
+            if ($('#tel').val() == '') {
+                alert('핸드폰을 입력해주세요.');
+                $('#tel').focus();
+                return false;
+            }
+        }
+        //이메일 인증 시
+        if ($('.find-tel-box').css('display') == 'none') {
+            //아이디와 이름과 이메일 입력 값 검사
+            if ($('#userid').val() == '') {
+                alert('아이디를 입력해주세요.');
+                $('#userid').focus();
+                return false;
+            }
+            if ($('#name').val() == '') {
+                alert('이름을 입력해주세요.');
+                $('#name').focus();
+                return false;
+            }
+            if ($('#email').val() == '') {
+                alert('이메일을 입력해주세요.');
+                $('#email').focus();
+                return false;
+            }
+        }
+        document.form.submit();
+    }
+
+}
+</script>
+
+<body class="loginbody">
+    <div class="text-center">
+        <a class="arrow-return" href="/login/"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="rgb(255, 255, 255)">
+                <path d="M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z"></path>
+            </svg></a>
+        <!-- header -->
+        <div class="header">
+            <div class="header-title">
+                <span class="header-title-text">Finding Account</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="#000000">
+                    <path d="M32 22c3.31 0 5.98-2.69 5.98-6s-2.67-6-5.98-6c-3.31 0-6 2.69-6 6s2.69 6 6 6zm-16 0c3.31 0 5.98-2.69 5.98-6s-2.67-6-5.98-6c-3.31 0-6 2.69-6 6s2.69 6 6 6zm0 4c-4.67 0-14 2.34-14 7v5h28v-5c0-4.66-9.33-7-14-7zm16 0c-.58 0-1.23.04-1.93.11C32.39 27.78 34 30.03 34 33v5h12v-5c0-4.66-9.33-7-14-7z"></path>
+                </svg>
+            </div>
+        </div>
+        <!-- header end -->
+        <div class="register-title">
+            <center>
+                <img class="findaccount-img" src="/static/img/findaccount.png">
+            </center>
+        </div>
+        <div class="findingaccount-two-buttons">
+            <button class="finduserid-btn">아이디찾기</button>
+            <button class="findpasswd-btn">비밀번호찾기</button>
+        </div>
+        <form method="post" name="form" action="/findaccount/">
+            {% csrf_token %}
+            <input type="hidden" id="find_userid" name="find_userid" value="1">
+            <input type="hidden" id="find_passwd" name="find_passwd" value="0">
+            <div class="register-box">
+                <div class="register-inbox">
+                    <label for="userid">인증방법</label>
+                    <label for="auth_method1" style="width:50px;">핸드폰</label><input type="radio" id="auth_method1" name="auth_method" value="tel" style="width:20px;">
+                    <label for="auth_method2" style="width:50px;">이메일</label><input type="radio" id="auth_method2" name="auth_method" value="email" style="width:20px;" checked>
+                </div>
+            </div>
+            <div class="register-box find-id-box" style="display:none;">
+                <div class="register-inbox">
+                    <label for="userid">아이디 &nbsp;| </label><input style="width: 180px" type="text" id="userid" name="userid">
+                </div>
+            </div>
+            <div class="register-box">
+                <div class="register-inbox">
+                    <label for="name">이&nbsp;&nbsp;&nbsp;&nbsp;름&nbsp; | </label><input style="width: 180px" type="text" id="name" name="name">
+                </div>
+            </div>
+            <div class="register-box find-email-box">
+                <div class="register-inbox">
+                    <label for="email">이메일 &nbsp;| </label><input style="width: 180px" type="text" id="email" name="email">
+                </div>
+            </div>
+            <div class="register-box find-tel-box" style="display:none">
+                <div class="register-inbox">
+                    <label for="tel">핸드폰 &nbsp;| </label><input style="width: 180px" type="text" id="tel" name="tel">
+                </div>
+            </div>
+            <div class="register-btn2-box">
+                <input type="button" id="findaccount-btn" class="register-btn2 btn" onclick="findaccount();" value="확인"></input>
+            </div>
+        </form>
+        {% endblock %}

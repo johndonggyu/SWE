@@ -1,0 +1,303 @@
+<!-- templates/mypage.html -->
+{% extends 'base.html' %}
+{% block title %}Mypage{% endblock %}
+{% block content %}
+<script type="text/javascript">
+$(function() {
+	if ("{{alert}}".length > 1){
+		alert('{{alert}}');
+		$('.edit-grouplist-container').css('display', 'block');
+		$('.edit-alarmsetting-container').css('display', 'none');
+		$('.edit-profile-container').css('display', 'none');
+		$('.join-group').css('background-color', '#E0E0E0');
+		$('.join-group').css('border-color', '#E0E0E0');
+		$('.request-group').css('background-color', '#5E5E5E');
+		$('.request-group').css('border-color', '#5E5E5E');
+		$('.mypage-grouplist-box1').css('display','none');
+		$('.mypage-grouplist-box2').css('display','block');
+		$('.join-group-nolist').css('display','none');
+		$('.wait-group-nolist').css('display','block');
+		return false;
+	}
+	$('.wait-group-nolist').css('display','none');
+	$('.join-group').click(function(){
+		$('.join-group').css('background-color', '#5E5E5E');
+		$('.join-group').css('border-color', '#5E5E5E');
+		$('.request-group').css('background-color', '#E0E0E0');
+		$('.request-group').css('border-color', '#E0E0E0');
+		$('.mypage-grouplist-box1').css('display','block');
+		$('.mypage-grouplist-box2').css('display','none');
+		$('.join-group-nolist').css('display','block');
+		$('.wait-group-nolist').css('display','none');
+	})
+	$('.request-group').click(function(){
+		$('.join-group').css('background-color', '#E0E0E0');
+		$('.join-group').css('border-color', '#E0E0E0');
+		$('.request-group').css('background-color', '#5E5E5E');
+		$('.request-group').css('border-color', '#5E5E5E');
+		$('.mypage-grouplist-box1').css('display','none');
+		$('.mypage-grouplist-box2').css('display','block');
+		$('.join-group-nolist').css('display','none');
+		$('.wait-group-nolist').css('display','block');
+	})
+	if('{{myinfo.alarm}}' == '1'){
+		$('#customSwitch1')[0].checked = true;
+	}
+	else if('{{myinfo.alarm}}' == '0'){
+		$('#customSwitch1')[0].checked = false;
+	}
+	$('.mypage-grouplist-leave-btn').click(function(){
+		var chk = confirm('정말 탈퇴하시겠습니까?');
+		if(chk){
+			var gid = $(this).prev().val();
+			$.ajax({
+			        type: 'get',
+			        dataType: 'text',
+			        url: '/leave/'+gid+'/',
+			        success: function(data) {
+			            alert(data);
+			            return false;
+			        },
+			        error: function(err) {
+			        	//console.log('error');
+			        }
+			})	
+		}else{
+			return false;
+		}
+	})
+	$('#customSwitch1').change(function(){
+		//console.log($('#customSwitch1')[0].checked);
+		if($('#customSwitch1')[0].checked == true){
+			//location.replace('/emailalarm/true/')
+			$.ajax({
+		        type: 'get',
+		        dataType: 'text',
+		        url: '/emailalarm/true/',
+		        success: function(data) {
+		            //console.log(data);
+		        },
+		        error: function(err) {
+		        	//console.log('error');
+		        }
+		    })
+		}
+		else if($('#customSwitch1')[0].checked == false){
+			//location.replace('/emailalarm/false/')
+			$.ajax({
+		        type: 'get',
+		        dataType: 'text',
+		        url: '/emailalarm/false/',
+		        success: function(data) {
+		            //console.log(data);
+		        },
+		        error: function(err) {
+		        	//console.log('error');
+		        }
+		    })
+		}
+	})
+	if('{{info}}'.length != 0){
+		alert('{{info}}');
+		location.replace('/mypage/');
+	}
+    $('.list-group').children().click(function() {
+        $('.list-group').children().removeClass('active');
+        $(this).addClass('active');
+    })
+    $('.mypage-logout-btn').click(function() {
+        var chk = confirm('로그아웃 하시겠습니까?');
+        if (chk) {
+            location.replace('/logout/');
+        } else {
+            return false;
+        }
+    })
+    $('.mypage-withdrawl-btn').click(function() {
+        var chk = confirm('회원탈퇴 하시겠습니까?');
+        if (chk) {
+            location.replace('/withdrawl/');
+        } else {
+            return false;
+        }
+    })
+    $('#myinfo').click(function() {
+        //그룹 조회 div display none
+        $('.edit-grouplist-container').css('display', 'none');
+        //알림 설정 div display none
+        $('.edit-alarmsetting-container').css('display', 'none');
+        //개인 정보 조회 시
+        $('.edit-profile-container').css('display', 'block');
+    })
+    $("#grouplist").click(function() {
+        $('.edit-grouplist-container').css('display', 'block');
+        $('.edit-alarmsetting-container').css('display', 'none');
+        $('.edit-profile-container').css('display', 'none');
+    })
+    $("#alarmsetting").click(function() {
+        $('.edit-grouplist-container').css('display', 'none');
+        $('.edit-alarmsetting-container').css('display', 'block');
+        $('.edit-profile-container').css('display', 'none');
+    })
+    $('.mypage-save-btn').click(function() {
+        //개인 정보 저장 시
+        if($('#inputPassword1').val().length < 5 && $('#inputPassword1').val().length != 0){
+        	alert("비밀번호를 최소 4자 이상으로 해주세요.");
+        	$(this).focus();
+        	return false;
+        }
+        else if($('#inputTel').val().length < 11){
+        	alert("올바른 휴대전화 번호를 입력해주세요.");
+        	$(this).focus();
+        	return false;
+        }
+        else if($('#inputEmail').val().length < 11){
+        	alert("올바른 이메일 형식을 입력해주세요.");
+        	$(this).focus();
+        	return false;
+        }
+        else if($('#inputPassword1').val() != $('#inputPassword2').val()){
+        	$('#inputPassword2').focus();
+        	alert("비밀번호를 다시 확인해주세요.");
+        	return false;
+        }else{
+        	document.profile_form.submit();
+        }
+    })
+})
+</script>
+
+<body class="loginbody">
+    <div class="text-center">
+        <!-- header -->
+        <div class="header">
+            <a class="arrow-return" href="/main/"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="rgb(255, 255, 255)">
+                    <path d="M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z"></path>
+                </svg></a>
+            </a>
+            <div class="header-title">
+                <span class="header-title-text">Mypage</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="#000000">
+                    <path d="M32 22c3.31 0 5.98-2.69 5.98-6s-2.67-6-5.98-6c-3.31 0-6 2.69-6 6s2.69 6 6 6zm-16 0c3.31 0 5.98-2.69 5.98-6s-2.67-6-5.98-6c-3.31 0-6 2.69-6 6s2.69 6 6 6zm0 4c-4.67 0-14 2.34-14 7v5h28v-5c0-4.66-9.33-7-14-7zm16 0c-.58 0-1.23.04-1.93.11C32.39 27.78 34 30.03 34 33v5h12v-5c0-4.66-9.33-7-14-7z"></path>
+                </svg>
+            </div>
+        </div>
+        <!-- header end -->
+        <!-- section start -->
+        <div class="list-group list-group-horizontal-md">
+            <a href="#" class="list-group-item list-group-item-action active" id="myinfo" draggable="false">
+                개인 정보
+            </a>
+            <a href="#" class="list-group-item list-group-item-action" id="grouplist" draggable="false">그룹 조회</a>
+            <a href="#" class="list-group-item list-group-item-action" id="alarmsetting" draggable="false">알림 설정</a>
+        </div>
+        <!-- section end -->
+        <!-- first section -->
+        <div class="edit-profile-container">
+            <form class="edit-profile" name="profile_form" action="/mypage/myinfo/" method="post">
+            	{% csrf_token %}
+                <div class="form-group row">
+                    <label for="staticUserid" class="col-sm-4 col-form-label">아이디</label>
+                    <div class="col-sm-7">
+                        <input type="text" readonly class="form-control-plaintext" id="staticUserid" value="{{myinfo.userid}}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputPassword" class="col-sm-4 col-form-label">비밀번호</label>
+                    <div class="col-sm-7">
+                        <input type="password" class="form-control" id="inputPassword1" name="change_password1">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputPassword" class="col-sm-4 col-form-label">비번 확인</label>
+                    <div class="col-sm-7">
+                        <input type="password" class="form-control" id="inputPassword2">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputName" class="col-sm-4 col-form-label">이름</label>
+                    <div class="col-sm-7">
+                        <input type="text" readonly class="form-control-plaintext" id="inputName" value="{{myinfo.name}}">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputTel" class="col-sm-4 col-form-label">휴대전화</label>
+                    <div class="col-sm-7">
+                        <input type="tel" class="form-control" id="inputTel" value="{{myinfo.phone}}" name="change_phone">
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputEmail" class="col-sm-4 col-form-label">이메일</label>
+                    <div class="col-sm-7">
+                        <input type="email" class="form-control" id="inputEmail" value="{{myinfo.email}}" name="change_email">
+                    </div>
+                </div>
+            </form>
+            <div class="mypage-bottom-btn">
+                <button class="btn btn-secondary mypage-save-btn">저장</button>
+            </div>
+            <div class="mypage-bottom-btns">
+                <button class="btn btn-secondary mypage-logout-btn">로그아웃</button>
+                <button class="btn btn-secondary mypage-withdrawl-btn">회원탈퇴</button>
+            </div>
+        </div>
+        <!-- first end -->
+        <!-- second section -->
+        <div class="edit-grouplist-container">
+            <form class="edit-grouplist" name="grouplist_form">
+            	<div class="group-btns">
+            		<button class="btn btn-secondary join-group" onclick="return false;">가입그룹</button>
+            		<button class="btn btn-secondary request-group" onclick="return false;">신청그룹</button>
+            	</div>
+            	{% if error1 %}
+            	<div class="join-group-nolist" style="position: absolute;top:40%;left:26%"><h5 style="margin-top:10px">목록이 비었습니다.</h5><p style="font-size:11px">새로운 그룹을 만들거나 가입해보세요.</p></div>
+            	{% else %}
+            	<!-- list loop -->
+            	<!-- 가입 중인 그룹 목록 -->
+            	{% for group in group_list1 %}
+            	<div class="mypage-grouplist-box1">
+            		<div class="mypage-grouplist-image">
+            			<img src="/static/img/{{group.groupid}}_banner.png" onerror="this.style.display='none'">
+            		</div>
+            		<div class="mypage-grouplist-title"><a style="color:black;text-decoration:none;" href="/gmain/{{group.groupid}}/">{{group.group_title}}</a></div>
+            		<div class="mypage-grouplist-leave">
+            			<input type="hidden" id="g{{group.groupid}}" value="{{group.groupid}}">
+            			<button class="btn btn-secondary mypage-grouplist-leave-btn">탈퇴</button>
+            		</div>
+            	</div>
+            	<!-- list loop end -->
+            	{% endfor %}
+            	{% endif %}
+            	<!-- list loop -->
+				{% if error2 %}
+            	<div class="wait-group-nolist" style="position: absolute;top:40%;left:26%"><h5 style="margin-top:10px">목록이 비었습니다.</h5><p style="font-size:11px">새로운 그룹을 만들거나 가입해보세요.</p></div>
+            	{% else %}
+            	<!-- 신청대기 중인 그룹 목록 -->
+            	{% for group in group_list2 %}
+            	<div class="mypage-grouplist-box2">
+            		<div class="mypage-grouplist-image">
+            			<img src="/static/img/{{group.groupid}}_banner.png" onerror="this.style.display='none'">
+            		</div>
+            		<div class="mypage-grouplist-title">{{group.group_title}}</div>
+            		<div class="mypage-grouplist-leave">
+            			<span class="mypage-grouplist-wait" disabled="disabled">승인<br/>대기중..</span>
+            		</div>
+            	</div>
+            	<!-- list loop end -->
+            	{% endfor %}
+            	{% endif %}
+            </form>
+        </div>
+        <!-- second end -->
+        <!-- third section -->
+        <div class="edit-alarmsetting-container">
+            <div class="email-alarm" style="overflow:hidden;">
+                <div style="height:100%;text-align:left;padding:10px;float:left;">이메일 수신 동의</div>
+                <div class="custom-control custom-switch" style="float:right;padding:10px;margin-right:10px;">
+                    <input type="checkbox" class="custom-control-input" id="customSwitch1">
+                    <label class="custom-control-label" for="customSwitch1"></label>
+                </div>
+            </div>
+        </div>
+        <!-- third end -->
+        {% endblock %}

@@ -1,0 +1,375 @@
+<!-- templates/main.html -->
+{% extends 'base.html' %}
+{% block title %}Main{% endblock %}
+{% block goback %}{% endblock %}
+{% block content %}
+<script type="text/javascript">
+	if ('{{error}}'=='1'){
+		$('.main-group-layout').html('<h5 style="margin-top:10px">목록이 비었습니다.</h5><p style="font-size:11px">새로운 그룹을 만들어주세요.</p>');
+	}
+function search(target) {
+    var keyword = target.value;
+    var encodeWord = encodeURI(keyword);
+    $.ajax({
+        type: 'get',
+        dataType: 'json',
+        url: '/search/' + keyword,
+        success: function(data) {
+            if (data.length == 0) {
+                $('.main-group-layout').html('<h5 style="margin-top:10px">그룹을 찾을 수 없습니다.</h5><p style="font-size:11px">전체 그룹을 보시려면 [전체그룹] 버튼을 눌러주세요.</p>');
+                return;
+            }
+            $('.main-group-layout').empty();
+            for (var key in data) {
+            	var the_btn ='';
+				if (data[key].status == 'none'){
+					the_btn = '<button class="btn btn-secondary join-group-btn">가입 신청 하기</button>';
+				}
+				else if(data[key].status == 'kicked'){
+					the_btn = '<button class="btn btn-secondary join-group-btn" disabled="disabled">가입 신청 하기</button>';
+				}
+				else if(data[key].status == 'waiting'){
+					the_btn = '<button class="btn btn-secondary waiting-group-btn" disabled="disabled">신청 중인 그룹</button>';
+				}
+				else if(data[key].status == 'allowed'){
+					the_btn = '<button class="btn btn-secondary enrolled-group-btn">그룹 메인 보기</button>';
+				}
+                //console.log(data[key].groupid);
+                var html = "<div class='group-info' data-toggle='collapse' href='#collapseDetails" + data[key].groupid + "' role='button' aria-expanded='false' aria-control='collapseDetails" + data[key].groupid + "'><input type='hidden' id='groupid' value='"+data[key].groupid+"'><div class='group-image-small'><img src='/static/img/" + data[key].groupid + "_banner.png'></div><div class='group-details-small'><ul><li class='theme'><div class='theme-img'></div>" + data[key].theme + "/" + data[key].area + "</li><li class='datetime'><div class='datetime-img'></div>" + data[key].group_startdate.substring(5, 10) + "</li><li class='location'><div class='location-img'></div>" + data[key].group_location + "/" + data[key].group_location2.substring(0, 3) + "</li><li class='title'>" + data[key].group_title + "</li></ul></div></div><div class='collapse toggle-group-details' id='collapseDetails" + data[key].groupid + "'><div class='group-info-bar'>상세정보</div><div class='group-details'><div class='group-image'><img src='/static/img/" + data[key].groupid + "_banner.png'></div><div class='group-content'>" + data[key].group_details + "</div></div><div class='main-footer-buttons'><input type='hidden' id='groupid' value='"+data[key].groupid+"'>"+the_btn+"<button class='btn btn-secondary close-details-btn' data-toggle='collapse' data-target='#collapseDetails" + data[key].groupid + "' aria-expanded='false' aria-controls='collapseDetails" + data[key].groupid + "'>상세 정보 닫기</button></div></div><!-- group toggle end --><!-- group list end -->";
+                $('.main-group-layout').append(html);
+                $('img').attr('onerror', "this.style.display='none'");
+            }
+        },
+        error: function(err) {
+            $('.main-group-layout').html('<h5 style="margin-top:10px">그룹을 찾을 수 없습니다.</h5><p style="font-size:11px">전체 그룹을 보시려면 [전체그룹] 버튼을 눌러주세요.</p>');
+        }
+    })
+}
+$(function() {
+	$('.enrolled-group-btn').click(function(){
+		var gid = $(this).prev().val();
+		location.replace('/gmain/'+gid);
+	})
+	$(".join-group-btn").click(function(){
+		var gid = $(this).prev().val();
+		//console.log(gid);
+		$.ajax({
+	        type: 'get',
+	        dataType: 'text',
+	        url: '/enroll/' + gid,
+	        success: function(data) {
+	            if(data == 'success'){
+	            	alert("가입 신청 하였습니다!");
+	            	location.replace('/main/');
+	            }else{
+	            	alert("가입 실패하였습니다!");
+	            	location.replace('/main/');
+	            }
+	        },
+	        error: function(err) {
+	            console.log('에러!');
+	        }
+	    });
+	})
+	if("{{result}}" == "1"){
+		alert("그룹이 성공적으로 생성되었습니다.");
+	}else if("{{result}}" == "0"){
+		alert("오류가 발생하였습니다.");
+	}else if ("{{result}}" == "2"){
+        alert("확장자는 bmp, jpg, jpeg, png 만 허용합니다.")
+    }
+    $('img').attr('onerror', "this.style.display='none'");
+    $('.mypage-btn').click(function() {
+        location.replace('/mypage');
+    })
+    $('.view-all-group').click(function() {
+        location.replace('/main');
+    })
+    $('.gcancel-btn').click(function(){
+    	$('.create-group-layout').css('display','none');
+    })
+    $('.create-group').click(function(){
+    	$('.create-group-layout').css('display','block');
+    })
+    $('.gcreate-btn').click(function(){
+    	var chk = confirm("그룹을 생성하시겠습니까?");
+    	if(chk){
+    		document.create_form.submit();
+    	}else{
+    		return false;
+    	}
+    })
+})
+
+var js_select_region_sido = new Array(
+    '서울',
+    '부산',
+    '대구',
+    '인천',
+    '광주',
+    '대전',
+    '울산',
+    '강원',
+    '경기',
+    '경남',
+    '경북',
+    '전남',
+    '전북',
+    '제주',
+    '충남',
+    '충북'
+);
+
+var js_select_region_gugun = new Object();
+js_select_region_gugun['서울'] = new Array(
+    '강남구', '강동구', '강북구', '강서구', '관악구', '광진구',
+    '구로구', '금천구', '노원구', '도봉구', '동대문구', '동작구',
+    '마포구', '서대문구', '서초구', '성동구', '성북구', '송파구',
+    '양천구', '영등포구', '용산구', '은평구', '종로구', '중구',
+    '중랑구'
+);
+js_select_region_gugun['부산'] = new Array(
+    '강서구', '금정구', '남구', '동구', '동래구', '부산진구',
+    '북구', '사상구', '사하구', '서구', '수영구', '연제구',
+    '영도구', '중구', '해운대구', '기장군'
+);
+js_select_region_gugun['대구'] = new Array(
+    '남구', '달서구', '동구', '북구', '서구', '수성구', '중구',
+    '달성군'
+);
+js_select_region_gugun['인천'] = new Array(
+    '계양구', '남구', '남동구', '동구', '부평구', '서구',
+    '연수구', '중구', '강화군', '옹진군'
+);
+js_select_region_gugun['광주'] = new Array(
+    '광산구', '남구', '동구', '북구', '서구'
+);
+js_select_region_gugun['대전'] = new Array(
+    '대덕구', '동구', '서구', '유성구', '중구'
+);
+js_select_region_gugun['울산'] = new Array(
+    '남구', '동구', '북구', '중구', '울주군'
+);
+js_select_region_gugun['강원'] = new Array(
+    '강릉시', '동해시', '삼척시', '속초시', '원주시', '춘천시',
+    '태백시', '고성군', '양구군', '양양군', '영월군', '인제군',
+    '정선군', '철원군', '평창군', '홍천군', '화천군', '횡성군'
+);
+js_select_region_gugun['경기'] = new Array(
+    '고양시 덕양구', '고양시 일산동구', '고양시 일산서구', '과천시', '광명시',
+    '광주시', '구리시', '군포시', '김포시', '남양주시', '동두천시',
+    '부천시 소사구', '부천시 오정구', '부천시 원미구', '성남시 분당구',
+    '성남시 수정구', '성남시 중원구', '수원시 권선구', '수원시 영통구',
+    '수원시 장안구', '수원시 팔달구', '시흥시', '안산시 단원구', '안산시 상록구',
+    '안성시', '안양시 동안구', '안양시 만안구', '양주시', '오산시', '용인시 기흥구',
+    '용인시 수지구', '용인시 처인구', '의왕시', '의정부시', '이천시', '파주시',
+    '평택시', '포천시', '하남시', '화성시', '가평군', '양평군', '여주군', '연천군'
+);
+js_select_region_gugun['경남'] = new Array(
+    '거제시', '김해시', '마산시', '밀양시', '사천시', '양산시', '진주시',
+    '진해시', '창원시', '통영시', '거창군', '고성군', '남해군', '산청군',
+    '의령군', '창녕군', '하동군', '함안군', '함양군', '합천군'
+);
+js_select_region_gugun['경북'] = new Array(
+    '경산시', '경주시', '구미시', '김천시', '문경시', '상주시', '안동시', '영주시',
+    '영천시', '포항시 남구', '포항시 북구', '고령군', '군위군', '봉화군', '성주군',
+    '영덕군', '영양군', '예천군', '울릉군', '울진군', '의성군', '청도군', '청송군', '칠곡군'
+);
+js_select_region_gugun['전남'] = new Array(
+    '광양시', '나주시', '목포시', '순천시', '여수시', '강진군', '고흥군', '곡성군', '구례군',
+    '담양군', '무안군', '보성군', '신안군', '영광군', '영암군', '완도군', '장성군', '장흥군',
+    '진도군', '함평군', '해남군', '화순군'
+);
+js_select_region_gugun['전북'] = new Array(
+    '군산시', '김제시', '남원시', '익산시', '전주시 덕진구', '전주시 완산구', '정읍시', '고창군',
+    '무주군', '부안군', '순창군', '완주군', '임실군', '장수군', '진안군'
+);
+js_select_region_gugun['제주'] = new Array(
+    '제주시', '서귀포시'
+);
+js_select_region_gugun['충남'] = new Array(
+    '계룡시', '공주시', '논산시', '보령시', '서산시', '아산시', '천안시', '금산군', '당진군',
+    '부여군', '서천군', '연기군', '예산군', '청양군', '태안군', '홍성군'
+);
+js_select_region_gugun['충북'] = new Array(
+    '제천시', '청주시 상당구', '청주시 흥덕구', '충주시', '괴산군', '단양군', '보은군',
+    '영동군', '옥천군', '음성군', '증평군', '진천군', '청원군'
+);
+
+function js_select_region(select1, select2) {
+    if (!select1) { alert('error'); return; }
+    if (!select2) { alert('error'); return; }
+    if (!js_select_region_select_sido(select1)) { alert('error'); return; }
+    if (!js_select_region_select_gugun(select1, select2)) { alert('error'); return; }
+    select1.onchange = function() {
+        select2.value = '';
+        js_select_region_select_gugun(select1, select2)
+    }
+}
+
+function js_select_region_select_sido(select1) {
+    if (!js_select_region_sido) { return false; }
+    if (select1.tagName != 'SELECT') { return false; }
+
+    var sido = js_select_region_sido;
+    var val = select1.value;
+    var opts = select1.options;
+    select1.length = 0;
+
+    var opt = new Option('시/도', '', (val == ''), (val == ''));
+    opts.add(opt);
+
+    for (var i = 0, m = sido.length; i < m; i++) {
+        var opt = new Option(sido[i], sido[i], (val == sido[i]), (val == sido[i]));
+        opts.add(opt);
+    }
+    return true;
+}
+
+function js_select_region_select_gugun(select1, select2) {
+    if (!js_select_region_gugun) { return false; }
+    if (select1.tagName != 'SELECT') { return false; }
+    if (select2.tagName != 'SELECT') { return false; }
+
+    var gugun = js_select_region_gugun;
+    var val = select2.value;
+    var opts = select2.options;
+    select2.length = 0;
+    var opt = new Option('구/군', '', (val == ''), (val == ''));
+    opts.add(opt);
+
+    if (!select1.value) { select2.disabled = true; return true; } else { select2.disabled = false; }
+
+    var list = gugun[select1.value];
+    if (!list) { return false; }
+
+    for (var i = 0, m = list.length; i < m; i++) {
+        var opt = new Option(list[i], list[i], (val == list[i]), (val == list[i]));
+        opts.add(opt);
+    }
+    return true;
+}
+</script>
+
+<body class="loginbody">
+    <div class="text-center">
+        <div class="main-header">
+            <div class="mypage-btn">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="#000000">
+                    <path d="M32 22c3.31 0 5.98-2.69 5.98-6s-2.67-6-5.98-6c-3.31 0-6 2.69-6 6s2.69 6 6 6zm-16 0c3.31 0 5.98-2.69 5.98-6s-2.67-6-5.98-6c-3.31 0-6 2.69-6 6s2.69 6 6 6zm0 4c-4.67 0-14 2.34-14 7v5h28v-5c0-4.66-9.33-7-14-7zm16 0c-.58 0-1.23.04-1.93.11C32.39 27.78 34 30.03 34 33v5h12v-5c0-4.66-9.33-7-14-7z"></path>
+                </svg>
+            </div>
+            <div class="search-bar">
+                <div class="search-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32.24800109863281" height="32.24800109863281" viewBox="0 0 32.24800109863281 32.24800109863281" fill="rgb(166, 166, 166)" data-svg-content="true" preserveAspectRatio="none">
+                        <g>
+                            <path d="M 19,0C 11.82,0, 6,5.82, 6,13c0,3.090, 1.084,5.926, 2.884,8.158l-8.592,8.592c-0.54,0.54-0.54,1.418,0,1.958 c 0.54,0.54, 1.418,0.54, 1.958,0l 8.592-8.592C 13.074,24.916, 15.91,26, 19,26c 7.18,0, 13-5.82, 13-13S 26.18,0, 19,0z M 19,24 C 12.934,24, 8,19.066, 8,13S 12.934,2, 19,2S 30,6.934, 30,13S 25.066,24, 19,24z"></path>
+                        </g>
+                    </svg>
+                </div>
+                <div class="search-text">
+                    <input type="text" id="keyword" name="query" placeholder="그룹을 검색해보세요." onkeyup="search(this);">
+                </div>
+            </div>
+        </div>
+        <div class="main-header-buttons">
+            <button class="btn btn-secondary view-all-group">전체 그룹</button>
+            <button class="btn btn-secondary create-group">그룹 만들기</button>
+        </div>
+        <div class="create-group-layout">
+        	<form method="post" action="/create/" name="create_form" enctype="multipart/form-data">
+        	{% csrf_token %}
+            제목 <input type="text" name="gtitle" placeholder="제목을 입력하세요." style="width:300px;"><br/>
+            테마 <input type="text" name="gtheme" placeholder="테마를 2글자 입력" maxlength="2" style="width:130px;font-size:13px;">
+            분야 <input type="text" name="garea" placeholder="분야를 2글자 입력" maxlength="2" style="width:130px;font-size:13px;"><br/>
+            모임 시작 시간 <input type="date" name="gstartdate"><br/>
+            모임 진행 기간 <select type="select" name="gduedate">
+            	<option value="1주간">1주간</option>
+            	<option value="2주간">2주간</option>
+            	<option value="3주간">3주간</option>
+            	<option value="한달간">한달간</option>
+            	<option value="두달간">두달간</option>
+            	<option value="세달간">세달간</option>
+            	<option value="네달 이상">네달 이상</option>
+            	<option value="미정">미정</option>
+            </select><br/>
+            모임 장소 <select id="sido" name="glocation"></select>
+            <select id="gugun" name="glocation2"></select><br/>
+            대표 이미지 <input type="file" name="gimage" style="width:250px;"><br/>
+            <span>아래는 그룹에 대한 설명을 작성하시오.</span>
+            <textarea name="gdetails" style="width:360px;height:283px;white-space:pre;resize:none;"></textarea>
+            <button class="btn btn-secondary gcreate-btn" style="float:left;margin-top:-7px;margin-left: 50px;" onclick="return false;">만들기</button>
+            <button class="btn btn-secondary gcancel-btn" style="float:right;margin-top:-7px;margin-right: 50px;" onclick="return false;">취소</button>
+        	</form>
+        </div>
+        <!-- group layout -->
+        <div class="main-group-layout">
+            <!-- group list -->
+            {% for group in group_list %}
+            <div class="group-info" data-toggle="collapse" href="#collapseDetails{{forloop.counter}}" role="button" aria-expanded="false" aria-control="collapseDetails{{forloop.counter}}">
+            	<input type="hidden" id="groupid" value="{{group.groupid}}">
+                <div class="group-image-small">
+                    <img src='/static/img/{{group.groupid}}_banner.png' onerror="this.style.display='none'">
+                </div>
+                <div class="group-details-small">
+                    <ul>
+                        <li class="theme">
+                            <div class="theme-img"></div>{{group.theme}}/{{group.area|slice:"0:2"}}
+                        </li>
+                        <li class="datetime">
+                            <div class="datetime-img"></div>{{group.group_startdate|slice:"5:10"}}
+                        </li>
+                        <li class="location">
+                            <div class="location-img"></div>{{group.group_location}}/{{group.group_location2|slice:"0:2"}}
+                        </li>
+                        <li class="title">{{group.group_title}}</li>
+                    </ul>
+                </div>
+            </div>
+            <!-- group toggle -->
+            <div class="collapse toggle-group-details" id="collapseDetails{{forloop.counter}}">
+                <div class="group-info-bar">상세정보</div>
+                <div class="group-details">
+                    <div class="group-image">
+                        <img src='/static/img/{{group.groupid}}_banner.png' onerror="this.style.display='none'">
+                    </div>
+                    <div class="group-content">
+                        {{group.group_details | safe}}
+                    </div>
+                </div>
+                <div class="main-footer-buttons">
+                	<input type="hidden" id="groupid" value="{{group.groupid}}">
+                	{% if group.status == 'none' %}
+                	<!-- 가입 신청하지 않은 그룹 no-->
+                    <button class="btn btn-secondary join-group-btn">가입 신청 하기</button>
+                    <!-- endif -->
+                    {% endif %}
+                    {% if group.status == 'kicked' %}
+                	<!-- 가입 신청하지 않은 그룹 no-->
+                    <button class="btn btn-secondary join-group-btn" disabled="disabled">가입 신청 하기</button>
+                    <!-- endif -->
+                    {% endif %}
+                    {% if group.status == 'waiting' %}
+                    <!-- 이미 가입 신청한 그룹 so-->
+                    <button class="btn btn-secondary waiting-group-btn" disabled="disabled">신청 중인 그룹</button>
+                    <!-- endif -->
+                    {% endif %}
+                    {% if group.status == 'allowed' %}
+                    <!-- 가입 완료한 그룹 yes-->
+                    <button class="btn btn-secondary enrolled-group-btn">그룹 메인 보기</button>
+                    <!-- endif -->
+                    {% endif %}
+                    <button class="btn btn-secondary close-details-btn" data-toggle="collapse" data-target="#collapseDetails{{forloop.counter}}" aria-expanded="false" aria-controls="collapseDetails{{forloop.counter}}">상세 정보 닫기</button>
+                </div>
+            </div>
+            <!-- group toggle end -->
+            {% endfor %}
+            <!-- group list end -->
+        </div>
+        <!-- group layout end -->
+    </div>
+</body>
+<script>
+js_select_region(document.getElementById('sido'),document.getElementById('gugun'));
+</script>
+{% endblock %}

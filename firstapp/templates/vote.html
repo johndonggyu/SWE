@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<!-- BEGIN: Head-->
+
+<head>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" type="text/css" href="bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="css/app-chat.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+
+<style>
+    :after, :before {
+        -webkit-box-sizing: border-box;
+        -moz-box-sizing: border-box;
+        box-sizing: border-box;
+    }
+    a{
+      cursor: pointer;
+    }
+</style>
+
+</head>
+
+<div>
+    
+</div>
+<body class="loginbody">
+    <div class="text-center">
+
+        <!-- 일정 투표 -->
+        <div class="chat-application" id="date-vote" style="position: absolute; width:100%;">
+            <div class="content-overlay"></div>
+            <div class="content-wrapper">
+                <div class="content-header row">
+                </div>
+                <div class="content-body">
+                    <div class="chat-overlay"></div>
+                    <section class="chat-window-wrapper">
+                        <div class="chat-area d-none">
+                            <div class="card chat-wrapper shadow-none mb-0">
+                                <form class="d-flex align-items-center" action="#" method="POST">
+                                    <div class="card-content">
+                                        <div class="chat-header">
+                                            <h4 class="pt-4" style="color: white">일정 투표</h4>
+                                            <!-- 뒤로가기 -->
+                                            <a class="group-setting" href="chat.html">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="rgb(255, 255, 255)">
+                                                    <path d="M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z"></path>
+                                                </svg>
+                                            </a>
+                                        </div>
+                                        <div class="card-body chat-container bg-white">
+                                            <div style="background: #444; border-radius: 10px">
+                                                <div class=" p-4" style="height:370px; overflow-y: auto">
+                                                    <p class="bg-white text-left mb-4">2020-03-01(화) </p>
+                                                    <p class="bg-white text-left mb-4">2020-03-01(화) </p>
+                                                    <p class="bg-white text-left mb-4">2020-03-01(화) </p>
+                                                    <p class="bg-white text-left mb-4">2020-03-01(화) </p>
+                                                    <p class="bg-white text-left mb-4">2020-03-01(화) </p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="card-footer chat-footer px-2 py-1 pb-0" style="background: white">
+                                        <button type="submit" class="btn glow send " style="background: #444 !important; color:white; font-size: 16px !important; width: 100%">투표하기</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+     
+
+
+    </div>
+
+    <script src="js/vendors.min.js"></script>
+    <script src="js/app-chat.js"></script>
+</body>
+
+
+</html>

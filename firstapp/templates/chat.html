@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html class="loading" lang="en" data-textdirection="ltr">
+<!-- BEGIN: Head-->
+
+<head>
+    <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/app-chat.css">
+    <script type="text/javascript" src="http://code.jquery.com/jquery-latest.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+    <script>
+        var _vid = 0;
+        
+        function VMS(){
+document.getElementById('vote').style.display = 'none';
+document.getElementById('createVote').style.display = 'block';
+}
+function whatVote(vote,vid){
+    _vid = vid;
+    document.getElementById('nice-nav').style.display='none';
+    var voteList = ['vvote'];
+    if (voteList[0].indexOf(vote) == 0){
+        document.getElementById(voteList[0]).style.display = 'block';
+    }else{
+        document.getElementById(voteList[0]).style.display = 'none';
+    }
+    //document.getElementById('the-vote').innerText = vname;
+    $.ajax({
+        url: '/view_items/'+_vid+'/',
+        type: 'get',
+        dataType: 'json',
+        success: function(res) {
+            for(r in res){
+                console.log(res[r])
+                b = String(Number(r)+1);
+                $('.vitem'+b+'-text').html(res[r].vcontent);
+                $('.vitem'+b+'-cnt').html("<img src='/static/img/user.png' style='width:20px;height:20px;'>"+res[r].vtotal+'&nbsp;');
+            }
+        },
+        error: function(xhr, error) {
+
+        }
+    });
+}
+
+function chatMessagesSend(source) {  //채팅 send 할떄바로 DB에 저장할것
+var message = chatMessageSend.val();
+var d = new Date();
+var currentDate = d.getFullYear() + "년 " + ( d.getMonth() + 1 ) + "월 " + d.getDate() + "일";
+var currentTime = d.getHours() + "시 " + d.getMinutes() + "분 " + d.getSeconds() + "초";
+var date_t = currentDate +' '+currentTime;
+if (message != "") {
+var html = '<div class="chat-message">' + "<p>" + message + "</p>" + "<div class=" + "chat-time" + ">"+date_t+"</div></div>";
+$(".chat-wrapper .chat:last-child .chat-body").append(html);
+chatMessageSend.val("");
+chatContainer.scrollTop($(".chat-container > .chat-content").height());
+}
+$.ajax({
+url: '/chat_msg/'+'{{gid}}'+'/',
+data: {
+'msg' : message,
+'date_t' : date_t,
+'csrfmiddlewaretoken': '{{csrf_token}}'
+},
+type: 'get',
+dataType: 'text',
+success: function(res) {
+
+},
+error: function(xhr, error) {
+
+}
+});
+}
+$(function(){
+    
+    var vitem1_click = 0;
+    var vitem2_click = 0;
+    var vitem3_click = 0;
+    $('.create-vote-cancel').click(function(){
+        $('.vote-list').css('display', 'block');
+        $('.create-vote').css('display', 'none');
+    })
+    $('.vote-submit').click(function(){
+        if($(".vote-input").val() == ''){
+            alert("투표의 제목은 입력하셔야 합니다.");
+            return false;
+        }
+        else if($("input[name='v_item1']").val() == ''){
+            alert("첫번째와 두번째 항목은 입력하셔야 합니다.");
+            return false;
+        }
+        else if($("input[name='v_item2']").val() == ''){
+            alert("첫번째와 두번째 항목은 입력하셔야 합니다.");
+            return false;
+        }
+        else if($("input[name=v_date]").val() == ''){
+            alert("투표종료일을 입력하셔야 합니다.");
+            return false;
+        }
+    })
+    
+    $('.vitem1').click(function(){
+        if(vitem1_click == 1){
+            $('.vitem1').attr('style', 'background-color:#FFFFFF!important');
+            vitem1_click = 0; 
+        }
+        else{
+            $('.vitem1').attr('style', 'background-color:#D0D0D0!important');
+            vitem1_click = 1;
+        }
+    })
+    $('.vitem2').click(function(){
+        if(vitem2_click == 1){
+            $('.vitem2').attr('style', 'background-color:#FFFFFF!important');
+            vitem2_click = 0; 
+        }
+        else{
+            $('.vitem2').attr('style', 'background-color:#D0D0D0!important');
+            vitem2_click = 1;
+        }
+    })
+    $('.vitem3').click(function(){
+        if(vitem3_click == 1){
+            $('.vitem3').attr('style', 'background-color:#FFFFFF!important');
+            vitem3_click = 0; 
+        }else{
+            $('.vitem3').attr('style', 'background-color:#D0D0D0!important');
+            vitem3_click = 1;
+        }
+        
+    })
+
+    $('.voteit-btn').click(function(){
+        var ck = confirm('선택하신대로 투표하시겠습니까?');
+        if(ck){
+            $.ajax({
+                url: '/voteit/'+'{{gid}}'+'/'+_vid+'/',
+                data: {
+                'item1' : vitem1_click,
+                'item2' : vitem2_click,
+                'item3' : vitem3_click,
+                'csrfmiddlewaretoken': '{{csrf_token}}'
+                },
+                type: 'get',
+                dataType: 'text',
+                success: function(res) {
+                },
+                error: function(xhr, error) {
+                }
+            });
+        }
+    })
+
+})
+</script>
+</head>
+<div>
+</div>
+
+<body class="loginbody">
+    <div class="text-center">
+        <!-- 햄버거 눌렀을떄 -->
+        <div class="nice-nav" id="nice-nav" style="border-radius: 0 20px 20px 0">
+            <div class="modal-header" style="border:none">
+                <button type="button" class="close" onclick="document.getElementById('nice-nav').style.display='none'">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="m-2 vote-list" style="height: 70%; overflow-y: auto; color:white; background: #444; border-radius: 20px; text-align: left" id="vote">
+                <ul class="m-3 mt-4">
+                    {% for key in vote_list %}
+                    <li>
+                        <a class="whatVote" onclick="whatVote('vvote','{{key.voteid}}')">
+                            <p style="cursor:pointer;color:white">{{key.v_title}}</p>
+                        </a>
+                    </li>
+                    {% endfor %}
+                </ul>
+            </div>
+            <div class="m-2 create-vote" id="createVote">
+                <div class="table-response m-4 p-2 bg-white" style="height:370px;">
+                    <form method="POST" action="/createvote/{{gid}}/" name="create_vote">
+                        {% csrf_token %}
+                        <table>
+                            <tr>
+                                <td class="pb-3"><input class="vote-input" type="text" placeholder="제목을 입력하세요." name="v_title"></td>
+                            </tr>
+                            <tr>
+                                <td><input class="vote-input" type="text" placeholder="item 1" name="v_item1"></td>
+                            </tr>
+                            <tr>
+                                <td><input class="vote-input" type="text" placeholder="item 2" name="v_item2"></td>
+                            </tr>
+                            <tr>
+                                <td><input class="vote-input" type="text" placeholder="item 3" name="v_item3"></td>
+                            </tr>
+                            <!--tr>
+                                <td><button class="btn add-item">항목 추가하기</button></td>
+                            </tr-->
+                        </table>
+                        <div class="create-vote-end">
+                            투표종료일<input class="vote-input" type="date" style="width:100%" name="v_date">
+                        </div>
+                        <table style="width:100%">
+                            <tr>
+                                <td style="float:left"><button class="btn create-vote-cancel" style="background: #dfdfdf" onclick="return false;">취소</button></td>
+                                <td style="float:right"><button class="btn vote-submit" style="background: #dfdfdf" type="submit">제출</td></button></td>
+                            </tr>
+                        </table>
+                    </form>
+                    <hr>
+                </div>
+            </div>
+            <div><button class="btn mt-4 pl-4 pr-4" style="background: #444; color:white" onclick="VMS()">투표 개설하기</button></div>
+        </div>
+        <!-- 채팅 -->
+        <div class="chat-application" style="position: absolute; width:100%;">
+            <div class="content-overlay"></div>
+            <div class="content-wrapper">
+                <div class="content-header row">
+                </div>
+                <div class="content-body">
+                    <div class="chat-overlay"></div>
+                    <section class="chat-window-wrapper">
+                        <div class="chat-area d-none">
+                            <div class="card chat-wrapper shadow-none mb-0">
+                                <div class="card-content">
+                                    <div class="chat-header">
+                                        <!-- 햄버거 -->
+                                        <a class="arrow-return" id='sub-menu' onclick="document.getElementById('nice-nav').style.display='block'">
+                                            <img src="/static/img/chat_menu.png" width="50" height="50"></button>
+                                        </a>
+                                        <!-- 뒤로가기 -->
+                                        <a class="group-setting" href="/gmain/{{gid}}/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="rgb(255, 255, 255)">
+                                                <path d="M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                    <div class="card-body chat-container">
+                                        <div class="chat-content">
+                                            {% for key in chat_list %}
+                                            <div class="chat {% if key.userid != userid %} chat-left{% endif %}">
+                                                <div class="chat-avatar">
+                                                    <a class="avatar m-0">
+                                                        <img src="/static/img/user.png" height="36" width="36" style="border-radius:50%" />
+                                                    </a>
+                                                </div>
+                                                <div class="chat-body">
+                                                    <div class="chat-message">
+                                                        <p>{{ key.msg }}</p>
+                                                        <span class="chat-time">{{ key.date_t }}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            {% endfor %}
+                                        </div>
+                                    </div>
+                                    <div class="card-footer chat-footer px-2 py-1 pb-0" style="background: #5E5E5E">
+                                        <form class="d-flex align-items-center" onsubmit="chatMessagesSend();" action="javascript:void(0);">
+                                            <input type="text" class="form-control chat-message-send mx-1" placeholder="내용을 입력해주세요.">
+                                            <button type="submit" class="btn glow send " style="background: #E0E0E0 !important;font-size: 16px !important; width: 70px">전송</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+        <!-- 일정 투표 -->
+        <div class="chat-application" id="vvote" style="position: absolute; width:100%; display: none">
+            <div class="content-overlay"></div>
+            <div class="content-wrapper">
+                <div class="content-header row">
+                </div>
+                <div class="content-body">
+                    <div class="chat-overlay"></div>
+                    <section class="chat-window-wrapper">
+                        <div class="chat-area d-none">
+                            <div class="card chat-wrapper shadow-none mb-0">
+    <div class="card-content">
+        <div class="chat-header">
+            <!-- 햄버거 -->
+            <a class="arrow-return" id='sub-menu' onclick="document.getElementById('nice-nav').style.display='block'">
+                <img src="/static/img/chat_menu.png" width="50" height="50"></button>
+            </a>
+            <h4 class="pt-4" id="the-vote" style="color: white"></h4>
+            <!-- 뒤로가기 -->
+            <a class="group-setting" href="/chatting/{{gid}}/">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="rgb(255, 255, 255)">
+                    <path d="M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z"></path>
+                </svg>
+            </a>
+        </div>
+        <div class="card-body chat-container bg-white">
+            <div style="background: #444; border-radius: 10px">
+                <div class=" p-4" style="height:300px; overflow-y: auto">
+                    <p class="bg-white text-left mb-4 vitem1"><span class="vitem1-text">1</span><span class="vitem1-cnt">1</span></p>
+                    <p class="bg-white text-left mb-4 vitem2"><span class="vitem2-text">1</span><span class="vitem2-cnt">1</span></p>
+                    <p class="bg-white text-left mb-4 vitem3"><span class="vitem3-text">2</span><span class="vitem3-cnt">3</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+                                <div class="card-footer chat-footer px-2 py-1 pb-0" style="background: white">
+                                        <button class="btn glow send voteit-btn" style="background: #444 !important; color:white; font-size: 16px !important; width: 100%">투표하기</button>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="/static/js/vendors.min.js"></script>
+    <script src="/static/js/app-chat.js"></script>
+</body>
+
+</html>

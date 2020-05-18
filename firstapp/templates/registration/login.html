@@ -1,0 +1,78 @@
+<!-- templates/registration/login.html -->
+{% extends 'base.html' %}
+{% block title %}Login{% endblock %}
+{% block content %}
+<script type="text/javascript">
+$(function() {
+    if ("{{error}}".length != 0) {
+        alert("{{error}}");
+        location.replace('/login/');
+    }
+})
+</script>
+
+<body class="loginbody">
+    <div class="text-center">
+        <!-- header -->
+        <div class="header">
+            <div class="header-title">
+                <span class="header-title-text">Reading Group</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="#000000">
+                    <path d="M32 22c3.31 0 5.98-2.69 5.98-6s-2.67-6-5.98-6c-3.31 0-6 2.69-6 6s2.69 6 6 6zm-16 0c3.31 0 5.98-2.69 5.98-6s-2.67-6-5.98-6c-3.31 0-6 2.69-6 6s2.69 6 6 6zm0 4c-4.67 0-14 2.34-14 7v5h28v-5c0-4.66-9.33-7-14-7zm16 0c-.58 0-1.23.04-1.93.11C32.39 27.78 34 30.03 34 33v5h12v-5c0-4.66-9.33-7-14-7z"></path>
+                </svg>
+            </div>
+        </div>
+        <!-- header end -->
+        <!-- login box -->
+        <form class="form-signin" method="post">
+            {% csrf_token %}
+            <div class="login-title">
+                <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="35" height="35" viewBox="0 0 32 32" fill="#000000" data-svg-content="true">
+                    <g>
+                        <path d="M 16,0C 10.392,0, 5.846,4.546, 5.846,10.154L 5.846,12 L 4,12 C 2.896,12, 2,12.896, 2,14l0,16 c0,1.104, 0.896,2, 2,2l 24,0 c 1.104,0, 2-0.896, 2-2L 30,14 c0-1.104-0.896-2-2-2l-1.846,0 L 26.154,10.154 C 26.154,4.546, 21.608,0, 16,0z M 9.846,10.154C 9.846,6.76, 12.606,4, 16,4 s 6.154,2.76, 6.154,6.154L 22.154,12 L 9.846,12 L 9.846,10.154 z M 16,26c-2.21,0-4-1.79-4-4c0-2.21, 1.79-4, 4-4s 4,1.79, 4,4C 20,24.21, 18.21,26, 16,26z"></path>
+                    </g>
+                </svg>
+                <span class="login-title-text">LOGIN</span>
+            </div>
+            <table class="login-table">
+                <tr class="login-inputs">
+                    <td class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <div data-obj-id="f02Z7" data-obj-type="icon" style="" class=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="25" viewBox="0 0 32 33.762001037597656" fill="rgb(166, 166, 166)" data-svg-content="true" preserveAspectRatio="none">
+                                        <g>
+                                            <path d="M 22,6c0-3.212-2.788-6-6-6S 10,2.788, 10,6c0,3.212, 2.788,6, 6,6S 22,9.212, 22,6zM 16,14c-5.256,0-10,5.67-10,12.716s 20,7.046, 20,0S 21.256,14, 16,14z"></path>
+                                        </g>
+                                    </svg></div>
+                            </span>
+                        </div>
+                        <input type="text" tabindex=1 class="form-control" placeholder="ID" name="username" required autofocus>
+                    </td>
+                    <td class="login-btn-box" rowspan="2">
+                        <button class="btn login-btn" tabindex=3 type="submit">로그인</button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="input-group mb-3">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text">
+                                <div data-obj-id="Lfdz6" data-obj-type="icon" class=""><svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="25" height="25" viewBox="0 0 32 32" fill="rgb(166, 166, 166)" data-svg-content="true" preserveAspectRatio="none">
+                                        <g>
+                                            <path d="M 31,0l-4,0 c-0.242,0-0.476,0.088-0.66,0.248L 12.536,12.35C 11.822,12.2, 10.718,12, 10,12c-5.514,0-10,4.486-10,10 s 4.486,10, 10,10s 10-4.486, 10-10c0-1.638-0.312-2.736-0.666-3.648l 3.404-1.156c 0.414-0.14, 0.688-0.534, 0.678-0.97l-0.084-3.796 l 3.82-0.266c 0.512-0.036, 0.914-0.454, 0.93-0.966l 0.142-4.558l 2.992-0.664C 31.674,5.876, 32,5.468, 32,5l0-4 C 32,0.448, 31.552,0, 31,0z M 7,22c 1.2,0, 2.236,0.706, 2.716,1.724C 9.898,24.112, 10,24.544, 10,25C 10,26.656, 8.656,28, 7,28 S 4,26.656, 4,25S 5.344,22, 7,22z"></path>
+                                        </g>
+                                    </svg></div>
+                            </span>
+                        </div>
+                        <input type="password" tabindex=2 class="form-control" placeholder="********" name="password" required autofocus>
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="2" class="login-other-buttons">
+                        <a class="btn finduser-btn" type="button" href="/findaccount">계정찾기</a>
+                        <a class="btn register-btn" type="button" href="/register/">회원가입</a>
+                    </td>
+                </tr>
+            </table>
+        </form>
+    </div>
+    {% endblock %}

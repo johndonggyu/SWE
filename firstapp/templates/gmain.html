@@ -1,0 +1,183 @@
+<!-- templates/gsetting.html -->
+{% extends 'base.html' %}
+{% block title %}Group Main{% endblock %}
+{% block content %}
+<script type="text/javascript">
+
+$(function() {
+    _str = document.location.origin + '/invite/{{groupid}}/';
+    $('#textbox-url').val(_str);
+    $('.invite_url').click(function() {
+        var urlbox = document.getElementById('textbox-url');
+        urlbox.select();
+        document.execCommand('Copy');
+        alert('URL이 복사되었습니다.');
+    });
+    $('.custom-file-input').change(function(){
+        var fileV = $('.custom-file-input').val().split("\\");
+        var fileName = fileV[fileV.length-1];
+        $('.custom-file-label').html(fileName);
+    })
+    $('.present-btn').click(function(){
+        document.presenter.submit();
+    })
+});
+</script>
+
+<body class="loginbody">
+    <div class="text-center">
+        <!-- header -->
+        <div class="group-header">
+            <a class="arrow-return" href="/main/">
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="rgb(255, 255, 255)">
+                    <path d="M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z"></path>
+                </svg>
+            </a>
+            <a class="group-setting" href="/gsetting/{{groupid}}/"><img src="/static/img/setting.png" width="55" height="45"></a>
+            <div class="gname">
+                <strong>{{group_title}}</strong>
+            </div>
+            <div class="group-button">
+                <button class="btn btn-secondary" data-toggle="modal" data-target="#default" style="font-size:12px">초대하기</button>
+                <a onclick="if(confirm('탈퇴하시겠습니까?')){document.location.href='/leave2/{{groupid}}/';}else{return false;}" class="btn btn-secondary" style="color:white;font-size:12px">탈퇴하기</a>
+            </div>
+        </div>
+        <!-- invite -->
+        <div class="modal fade text-left" id="default" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel1">
+                            <center>초대하기</center>
+                        </h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <br>
+                        <div class="table-response">
+                            <table style="width:100%; text-align: center">
+                                <tr>
+                                    <td><img src="/static/img/kakao.png" style="border-radius: 50%" width="100" height="100"></td>
+                                    <td><img src="/static/img/mail.png" style="border-radius: 50%" width="100" height="100"></td>
+                                    <td><a class="invite_url"><img src="/static/img/url.png" style="border-radius: 50%" width="100" height="100"></a></td>
+                                </tr>
+                                <tr>
+                                    <td>카카오톡</td>
+                                    <td>E-mail</td>
+                                    <td>URL 복사<br /><input type="text" style="width:100px;font-size:5px;" id="textbox-url"></td>
+                                </tr>
+                            </table>
+                        </div>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body" style="text-align: left">
+            <p><img src="/static/img/notify.png" width="30" height="30">공지사항</p>
+            <center>
+                <div class="notify">
+                    <span>{{notice.n_date|slice:":11"}} 모임 일정</span>
+                    <div class="notify-content p-2">
+                        <table class="notify-contents">
+                            <tr>
+                                <td><b>일시</b>: {{notice.n_date}}</td>
+                            </tr>
+                            <tr>
+                                <td><b>장소</b>: {{notice.n_loc}} </td>
+                            </tr>
+                            <tr>
+                                <td><b>도서명</b>: {{notice.n_book}} </td>
+                            </tr>
+                            <tr>
+                                <td><b>발제자</b>: 
+                                    {% for p in presenter %}
+                                    {% if presenter|length > 1 %}
+                                    {{ p.name }}({{p.userid}}), 
+                                    {% else %}
+                                    {{ p.name }}({{p.userid}})
+                                    {% endif %}
+                                    {% endfor %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <td><b>공지말씀</b>: {{notice.n_text}} </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+            </center>
+        </div>
+        <div class="mt-1 ml-3">
+            <div class="table-response">
+                <table style="width:100%;">
+                    <tr>
+                        <td style="width: 50%;">
+                            <div class="best-book">
+                                <div class="card-title mt-2" style="border-bottom:1px solid #686868; text-indent: 5px;">
+                                    <span><img src="/static/img/book.png" width="30" height="30"> 이달의 베스트셀러</span>
+                                </div>
+                                <div class="p-2" style="overflow-y:auto; width:98%; height:150px;text-align: left;">
+                                    <p>· C언어로 쉽게 풀어쓴 동규</p>
+                                    <p>· C언어로 쉽게 풀어쓴 동규</p>
+                                    <p>· C언어로 쉽게 풀어쓴 동규</p>
+                                    <p>· C언어로 쉽게 풀어쓴 동규</p>
+                                    <p>· C언어로 쉽게 풀어쓴 동규</p>
+                                    <p>· C언어로 쉽게 풀어쓴 동규</p>
+                                    <p>· C언어로 쉽게 풀어쓴 동규</p>
+                                </div>
+                            </div>
+                        </td>
+                        <td style="width: 50%">
+                            <center>
+                                멤버 목록
+                                <div class="gmember p-2 mb-2">
+                                    {% for key in member %}
+                                    <p class="glist"><img src="/static/img/user.png" width="20" height="20"> {{key.name}}({{key.userid}})</p>
+                                    {% endfor %}
+                                </div>
+                                <button class="btn gbutton mb-2" data-toggle="modal" data-target="#default2">발제자 신청</button>
+                                <a href="/chatting/{{groupid}}/" class="btn gbutton">채팅 <img src="/static/img/chat.png" width="30" height="22"></a>
+                            </center>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <!-- 발제 -->
+        <div class="modal fade text-left" id="default2" tabindex="-1" role="dialog" aria-labelledby="myModalLabel1" aria-hidden="true">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h4 class="modal-title" id="myModalLabel1">
+                            <center>발제자 신청</center>
+                        </h4>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <br>
+                        <center>
+                            <h5>발제문 첨부</h5>
+                            <form method="POST" action="/present/{{groupid}}/" enctype="multipart/form-data" name="presenter">
+                                {% csrf_token %}
+                                <div class="custom-file">
+                                    <input type="file" name="file" id="file" class="custom-file-input form-control" style="width:80%" id="inputGroupFile04" aria-describedby="inputGroupFileAddon04">
+                                    <br>
+                                    <label class="custom-file-label" for="inputGroupFile04">파일을 선택하세요.</label>
+                                </div>
+                                <button type="submit" class="btn grey btn-secondary present-btn" id="inputGroupFileAddon04" style="width:100px" data-dismiss="modal">확인</button>
+                            </form>
+                        </center>
+                        <br>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <script src="/static/js/vendors2.min.js"></script>
+        <script src="/static/js/components-modal.js"></script>
+</body>
+<!--         {% endblock %} -->

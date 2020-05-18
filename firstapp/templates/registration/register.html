@@ -1,0 +1,159 @@
+<!-- templates/registration/register.html -->
+{% extends 'base.html' %}
+{% block title %}Register{% endblock %}
+{% block content %}
+<script type="text/javascript">
+var status = "{{status}}";
+var userid_ck = 0;
+var email_ck = 0;
+if (status === "0") {
+    alert("비밀번호를 확인해주세요.");
+}
+
+$(function() {
+    $('#btn-userid').click(function() {
+        userid_ck = 1;
+        var userid = $('#userid').val();
+        if (userid == '') {
+            userid_ck = 0;
+            alert('아이디를 입력해주세요.');
+            return false;
+        }
+        $.ajax({
+            url: '/checkuserid?userid=' + userid,
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                if (response.result != 'success') {
+                    console.error(response.data);
+                    return false;
+                }
+                if (response.data == 'exist') {
+                    userid_ck = 0;
+                    alert("존재하는 아이디 입니다!");
+                    $('#userid').val('').focus();
+                    return false;
+                } else {
+                    userid_ck = 1;
+                    alert("사용하셔도 되는 아이디 입니다!");
+                    return false;
+                }
+            },
+            error: function(xhr, error) {
+                alert("서버와의 통신에서 문제가 발생하였습니다.");
+                console.error("error : " + error);
+            }
+        });
+    });
+});
+
+$(function() {
+    $('#register-btn').click(function() {
+        var passwd = $('#passwd').val();
+        var passwd2 = $('#passwd2').val();
+        if (passwd != passwd2) {
+            alert("패스워드를 확인해주세요.");
+            $('#passwd2').val().focus();
+            return false;
+        } else {
+            if (userid_ck == 0) {
+                alert("아이디 중복체크를 해주세요.");
+                return false;
+            } else if (email_ck == 0) {
+                alert("이메일 중복체크를 해주세요.");
+                return false;
+            }
+
+            if (userid_ck == 1 && email_ck == 1) {
+                document.form.submit();
+               	alert("회원가입이 완료되었습니다!");
+            }
+
+        }
+    })
+
+})
+
+$(function() {
+    $('#btn-email').click(function() {
+        email_ck = 1;
+        var email = $('#email').val();
+        if (email == '') {
+            email_ck = 0;
+            alert('이메일을 입력해주세요.');
+            return false;
+        }
+        $.ajax({
+            url: '/checkemail?email=' + email,
+            type: 'get',
+            dataType: 'json',
+            success: function(response) {
+                if (response.result != 'success') {
+                    console.error(response.data);
+                    return false;
+                }
+                if (response.data == 'exist') {
+                    email_ck = 0;
+                    alert("존재하는 이메일 입니다!");
+                    $('#email').val('').focus();
+                    return false;
+                } else {
+                    email_ck = 1;
+                    alert("사용하셔도 되는 이메일입니다!");
+                    return false;
+                }
+            },
+            error: function(xhr, error) {
+                alert("서버와의 통신에서 문제가 발생하였습니다.");
+                console.error("error : " + error);
+            }
+        });
+    });
+});
+</script>
+
+<body class="loginbody">
+    <div class="text-center">
+        <!-- header -->
+        <div class="header">
+            <a class="arrow-return" href="/login/"><svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="rgb(255, 255, 255)">
+                    <path d="M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z"></path>
+                </svg></a>
+            </a>
+            <div class="header-title">
+                <span class="header-title-text">Joining</span>
+                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="#000000">
+                    <path d="M32 22c3.31 0 5.98-2.69 5.98-6s-2.67-6-5.98-6c-3.31 0-6 2.69-6 6s2.69 6 6 6zm-16 0c3.31 0 5.98-2.69 5.98-6s-2.67-6-5.98-6c-3.31 0-6 2.69-6 6s2.69 6 6 6zm0 4c-4.67 0-14 2.34-14 7v5h28v-5c0-4.66-9.33-7-14-7zm16 0c-.58 0-1.23.04-1.93.11C32.39 27.78 34 30.03 34 33v5h12v-5c0-4.66-9.33-7-14-7z"></path>
+                </svg>
+            </div>
+        </div>
+        <!-- header end -->
+        <div class="register-title">
+            <center>
+                <p class="register-title-background">
+                    <span class="register-title-text">정보입력</span>
+                </p>
+            </center>
+        </div>
+        <form method="post" name="form" action="/register/">
+            {% csrf_token %}
+            <div class="register-box">
+                <div class="register-inbox">
+                    <label for="userid">아이디*</label><input type="text" id="userid" name="userid">&nbsp;&nbsp;<a id="btn-userid" class="btn btn-secondary">중복확인</a>
+                    <hr />
+                    <label for="passwd">비밀번호*</label><input id="passwd" type="password" style="width:180px;" name="passwd">
+                    <hr />
+                    <label for="passwd2">비밀번호 확인*</label><input id="passwd2" name="passwd2" type="password" style="width:180px;">
+                    <hr />
+                    <label for="name">이름*</label><input name="name" id="name" type="text" style="width:180px;">
+                    <hr />
+                    <label for="tel">휴대전화*</label><input id="tel" name="tel" type="tel" style="width:180px;">
+                    <hr />
+                    <label for="email">이메일*</label><input id="email" name="email" type="email">&nbsp;&nbsp;<a id="btn-email" class="btn btn-secondary">중복확인</a>
+                </div>
+            </div>
+            <div class="register-btn2-box">
+                <button id="register-btn" class="register-btn2 btn">회원가입</button>
+            </div>
+        </form>
+        {% endblock %}
