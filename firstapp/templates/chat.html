@@ -11,148 +11,157 @@
         var _vid = 0;
         
         function VMS(){
-document.getElementById('vote').style.display = 'none';
-document.getElementById('createVote').style.display = 'block';
-}
-function whatVote(vote,vid){
-    _vid = vid;
-    document.getElementById('nice-nav').style.display='none';
-    var voteList = ['vvote'];
-    if (voteList[0].indexOf(vote) == 0){
-        document.getElementById(voteList[0]).style.display = 'block';
-    }else{
-        document.getElementById(voteList[0]).style.display = 'none';
-    }
-    //document.getElementById('the-vote').innerText = vname;
-    $.ajax({
-        url: '/view_items/'+_vid+'/',
-        type: 'get',
-        dataType: 'json',
-        success: function(res) {
-            for(r in res){
-                console.log(res[r])
-                b = String(Number(r)+1);
-                $('.vitem'+b+'-text').html(res[r].vcontent);
-                $('.vitem'+b+'-cnt').html("<img src='/static/img/user.png' style='width:20px;height:20px;'>"+res[r].vtotal+'&nbsp;');
-            }
-        },
-        error: function(xhr, error) {
+            document.getElementById('vote').style.display = 'none';
+            document.getElementById('createVote').style.display = 'block';
+        }
+        function whatVote(vid){
+            _vid = vid;
+            document.getElementById('vid').value = vid;
+            document.getElementById('nice-nav').style.display='none';
+            document.getElementById('vvote').style.display = 'block';
 
-        }
-    });
-}
-
-function chatMessagesSend(source) {  //채팅 send 할떄바로 DB에 저장할것
-var message = chatMessageSend.val();
-var d = new Date();
-var currentDate = d.getFullYear() + "년 " + ( d.getMonth() + 1 ) + "월 " + d.getDate() + "일";
-var currentTime = d.getHours() + "시 " + d.getMinutes() + "분 " + d.getSeconds() + "초";
-var date_t = currentDate +' '+currentTime;
-if (message != "") {
-var html = '<div class="chat-message">' + "<p>" + message + "</p>" + "<div class=" + "chat-time" + ">"+date_t+"</div></div>";
-$(".chat-wrapper .chat:last-child .chat-body").append(html);
-chatMessageSend.val("");
-chatContainer.scrollTop($(".chat-container > .chat-content").height());
-}
-$.ajax({
-url: '/chat_msg/'+'{{gid}}'+'/',
-data: {
-'msg' : message,
-'date_t' : date_t,
-'csrfmiddlewaretoken': '{{csrf_token}}'
-},
-type: 'get',
-dataType: 'text',
-success: function(res) {
-
-},
-error: function(xhr, error) {
-
-}
-});
-}
-$(function(){
-    
-    var vitem1_click = 0;
-    var vitem2_click = 0;
-    var vitem3_click = 0;
-    $('.create-vote-cancel').click(function(){
-        $('.vote-list').css('display', 'block');
-        $('.create-vote').css('display', 'none');
-    })
-    $('.vote-submit').click(function(){
-        if($(".vote-input").val() == ''){
-            alert("투표의 제목은 입력하셔야 합니다.");
-            return false;
-        }
-        else if($("input[name='v_item1']").val() == ''){
-            alert("첫번째와 두번째 항목은 입력하셔야 합니다.");
-            return false;
-        }
-        else if($("input[name='v_item2']").val() == ''){
-            alert("첫번째와 두번째 항목은 입력하셔야 합니다.");
-            return false;
-        }
-        else if($("input[name=v_date]").val() == ''){
-            alert("투표종료일을 입력하셔야 합니다.");
-            return false;
-        }
-    })
-    
-    $('.vitem1').click(function(){
-        if(vitem1_click == 1){
-            $('.vitem1').attr('style', 'background-color:#FFFFFF!important');
-            vitem1_click = 0; 
-        }
-        else{
-            $('.vitem1').attr('style', 'background-color:#D0D0D0!important');
-            vitem1_click = 1;
-        }
-    })
-    $('.vitem2').click(function(){
-        if(vitem2_click == 1){
-            $('.vitem2').attr('style', 'background-color:#FFFFFF!important');
-            vitem2_click = 0; 
-        }
-        else{
-            $('.vitem2').attr('style', 'background-color:#D0D0D0!important');
-            vitem2_click = 1;
-        }
-    })
-    $('.vitem3').click(function(){
-        if(vitem3_click == 1){
-            $('.vitem3').attr('style', 'background-color:#FFFFFF!important');
-            vitem3_click = 0; 
-        }else{
-            $('.vitem3').attr('style', 'background-color:#D0D0D0!important');
-            vitem3_click = 1;
-        }
-        
-    })
-
-    $('.voteit-btn').click(function(){
-        var ck = confirm('선택하신대로 투표하시겠습니까?');
-        if(ck){
             $.ajax({
-                url: '/voteit/'+'{{gid}}'+'/'+_vid+'/',
+                url: '/view_items/' +_vid,
+                type: 'get',
+                dataType: 'json',
+                success: function(response) {
+                        document.getElementById('vitem1-text').innerHTML = response[0].vcontent;
+                        document.getElementById('vitem2-text').innerHTML = response[1].vcontent;
+                        document.getElementById('vitem3-text').innerHTML = response[2].vcontent;
+
+                        document.getElementById('vitem1-cnt').innerHTML = response[0].vtotal;
+                        document.getElementById('vitem2-cnt').innerHTML = response[1].vtotal;
+                        document.getElementById('vitem3-cnt').innerHTML = response[2].vtotal;
+                },
+                error: function(xhr, error) {
+                    alert("서버와의 통신에서 문제가 발생하였습니다.");
+                    console.error("error : " + error);
+                }
+            });
+
+        }
+
+        function chatMessagesSend(source) {  //채팅 send 할떄바로 DB에 저장할것
+            var message = chatMessageSend.val();
+            var d = new Date();
+            var currentDate = d.getFullYear() + "년 " + ( d.getMonth() + 1 ) + "월 " + d.getDate() + "일";
+            var currentTime = d.getHours() + "시 " + d.getMinutes() + "분 " + d.getSeconds() + "초";
+            var date_t = currentDate +' '+currentTime;
+            if (message != "") {
+            /*var html = '<div class="chat-message">' + "<p>" + message + "</p>" + "<div class=" + "chat-time" + ">"+date_t+"</div></div>";
+            $(".chat-wrapper .chat:last-child .chat-body").append(html);*/
+            chatMessageSend.val("");
+            chatContainer.scrollTop($(".chat-container > .chat-content").height());
+            }
+            $.ajax({
+                url: '/chat_msg/'+'{{gid}}'+'/',
                 data: {
-                'item1' : vitem1_click,
-                'item2' : vitem2_click,
-                'item3' : vitem3_click,
-                'csrfmiddlewaretoken': '{{csrf_token}}'
+                    'msg' : message,
+                    'date_t' : date_t,
+                    'csrfmiddlewaretoken': '{{csrf_token}}'
                 },
                 type: 'get',
                 dataType: 'text',
                 success: function(res) {
+
                 },
                 error: function(xhr, error) {
+
                 }
             });
         }
-    })
+        $(function(){
+            
+            var vitem1_click = 0;
+            var vitem2_click = 0;
+            var vitem3_click = 0;
+            $('.create-vote-cancel').click(function(){
+                $('.vote-list').css('display', 'block');
+                $('.create-vote').css('display', 'none');
+            })
+            $('.vote-submit').click(function(){
+                if($(".vote-input").val() == ''){
+                    alert("투표의 제목은 입력하셔야 합니다.");
+                    return false;
+                }
+                else if($("input[name='v_item1']").val() == ''){
+                    alert("첫번째와 두번째 항목은 입력하셔야 합니다.");
+                    return false;
+                }
+                else if($("input[name='v_item2']").val() == ''){
+                    alert("첫번째와 두번째 항목은 입력하셔야 합니다.");
+                    return false;
+                }
+                else if($("input[name=v_date]").val() == ''){
+                    alert("투표종료일을 입력하셔야 합니다.");
+                    return false;
+                }
+            })
+            
+            $('.vitem1').click(function(){
+                if(vitem1_click == 1){
+                    $('.vitem1').attr('style', 'background-color:#FFFFFF!important');
+                    vitem1_click = 0;
+                    document.getElementById('item1').value = "0";
+                }
+                else{
+                    $('.vitem1').attr('style', 'background-color:#D0D0D0!important');
+                    vitem1_click = 1;
+                    document.getElementById('item1').value = "1";
+                }
+            })
+            $('.vitem2').click(function(){
+                if(vitem2_click == 1){
+                    $('.vitem2').attr('style', 'background-color:#FFFFFF!important');
+                    vitem2_click = 0; 
+                    document.getElementById('item2').value = "0";
+                }
+                else{
+                    $('.vitem2').attr('style', 'background-color:#D0D0D0!important');
+                    vitem2_click = 1; 
+                    document.getElementById('item2').value = "1";
+                }
+            })
+            $('.vitem3').click(function(){
+                if(vitem3_click == 1){
+                    $('.vitem3').attr('style', 'background-color:#FFFFFF!important');
+                    document.getElementById('item3').value = "0";
+                }else{
+                    $('.vitem3').attr('style', 'background-color:#D0D0D0!important');
+                    vitem3_click = 1;
+                    document.getElementById('item3').value = "1";
+                }
+                
+            })
+            setInterval(function(){
+                var data = '';
+                $.ajax({
+                    url: '/chat_list/'+'{{gid}}'+'/',
+                    type: 'get',
+                    dataType: 'json',
+                    success: function(res) {
+                        for(r in res){
+                            if("{{userid}}" != res[r].userid){
+                                data += "<div class='chat chat-left'><div class='chat-avatar'><a class='avatar m-0'><img src='/static/img/user.png' height='36' width='36' style='border-radius:50%' /><p class='msg-userid'>"+res[r].userid+"</p></a></div><div class='chat-body'><div class='chat-message'><p>"+res[r].msg+"</p><span class='chat-time'>"+res[r].date_t.substring(13)+"</span></div></div></div>";
+                            }else{
+                                data += "<div class='chat'><div class='chat-avatar'><a class='avatar m-0'><img src='/static/img/user.png' height='36' width='36' style='border-radius:50%' /><p class='msg-userid'>"+res[r].userid+"</p></a></div><div class='chat-body'><div class='chat-message'><p>"+res[r].msg+"</p><span class='chat-time'>"+res[r].date_t.substring(13)+"</span></div></div></div>";
+                            }
+                        }
+                        $('.chat-content').children().remove();
+                        console.log(data);
+                        $('.chat-content').append(data);
+                        $('.chat-container').animate({
+                          scrollTop: chatContainer[0].scrollHeight,
+                        }, 400)
+                    },
+                    error: function(xhr, error) {
 
-})
-</script>
+                    }
+                });
+            }, 1000);
+            
+        })
+    </script>
 </head>
 <div>
 </div>
@@ -170,7 +179,7 @@ $(function(){
                 <ul class="m-3 mt-4">
                     {% for key in vote_list %}
                     <li>
-                        <a class="whatVote" onclick="whatVote('vvote','{{key.voteid}}')">
+                        <a class="whatVote" onclick="whatVote('{{key.voteid}}')">
                             <p style="cursor:pointer;color:white">{{key.v_title}}</p>
                         </a>
                     </li>
@@ -244,12 +253,13 @@ $(function(){
                                                 <div class="chat-avatar">
                                                     <a class="avatar m-0">
                                                         <img src="/static/img/user.png" height="36" width="36" style="border-radius:50%" />
+                                                        <p class="msg-userid">{{key.userid}}</p>
                                                     </a>
                                                 </div>
                                                 <div class="chat-body">
                                                     <div class="chat-message">
                                                         <p>{{ key.msg }}</p>
-                                                        <span class="chat-time">{{ key.date_t }}</span>
+                                                        <span class="chat-time">{{ key.date_t|slice:"13:" }}</span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -279,32 +289,41 @@ $(function(){
                     <section class="chat-window-wrapper">
                         <div class="chat-area d-none">
                             <div class="card chat-wrapper shadow-none mb-0">
-    <div class="card-content">
-        <div class="chat-header">
-            <!-- 햄버거 -->
-            <a class="arrow-return" id='sub-menu' onclick="document.getElementById('nice-nav').style.display='block'">
-                <img src="/static/img/chat_menu.png" width="50" height="50"></button>
-            </a>
-            <h4 class="pt-4" id="the-vote" style="color: white"></h4>
-            <!-- 뒤로가기 -->
-            <a class="group-setting" href="/chatting/{{gid}}/">
-                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="rgb(255, 255, 255)">
-                    <path d="M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z"></path>
-                </svg>
-            </a>
-        </div>
-        <div class="card-body chat-container bg-white">
-            <div style="background: #444; border-radius: 10px">
-                <div class=" p-4" style="height:300px; overflow-y: auto">
-                    <p class="bg-white text-left mb-4 vitem1"><span class="vitem1-text">1</span><span class="vitem1-cnt">1</span></p>
-                    <p class="bg-white text-left mb-4 vitem2"><span class="vitem2-text">1</span><span class="vitem2-cnt">1</span></p>
-                    <p class="bg-white text-left mb-4 vitem3"><span class="vitem3-text">2</span><span class="vitem3-cnt">3</span></p>
-                </div>
-            </div>
-        </div>
-    </div>
+                                <div class="card-content">
+                                    <div class="chat-header">
+                                        <!-- 햄버거 -->
+                                        <a class="arrow-return" id='sub-menu' onclick="document.getElementById('nice-nav').style.display='block'">
+                                            <img src="/static/img/chat_menu.png" width="50" height="50"></button>
+                                        </a>
+                                        <h4 class="pt-4" id="the-vote" style="color: white"></h4>
+                                        <!-- 뒤로가기 -->
+                                        <a class="group-setting" href="/chatting/{{gid}}/">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 48 48" data-svg-content="true" fill="rgb(255, 255, 255)">
+                                                <path d="M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z"></path>
+                                            </svg>
+                                        </a>
+                                    </div>
+                                    <div class="card-body chat-container bg-white">
+                                        <div style="background: #444; border-radius: 10px">
+                                            <div class=" p-4" style="height:300px; overflow-y: auto">
+                                                <p class="bg-white text-left mb-4 vitem1"><span class="vitem1-text" id="vitem1-text"></span><span class="vitem1-cnt" id="vitem1-cnt"></span></p>
+                                                <p class="bg-white text-left mb-4 vitem2"><span class="vitem2-text" id="vitem2-text"></span><span class="vitem2-cnt" id="vitem2-cnt"></span></p>
+                                                <p class="bg-white text-left mb-4 vitem3"><span class="vitem3-text" id="vitem3-text"></span><span class="vitem3-cnt" id="vitem3-cnt"></span></p>
+                                                
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="card-footer chat-footer px-2 py-1 pb-0" style="background: white">
+                                    <form method="POST" action="/voteit/">
+                                        {% csrf_token %}
+                                        <input type="text" id="gid" name="gid" value="{{gid}}" style="display: none">
+                                        <input type="text" id="vid" name="vid" value="none" style="display: none">
+                                        <input type="text" id="item1" name="item1" value="0" style="display: none">
+                                        <input type="text" id="item2" name="item2" value="0" style="display: none">
+                                        <input type="text" id="item3" name="item3" value="0" style="display: none">
                                         <button class="btn glow send voteit-btn" style="background: #444 !important; color:white; font-size: 16px !important; width: 100%">투표하기</button>
+                                    </form>
                                 </div>
                             </div>
                         </div>

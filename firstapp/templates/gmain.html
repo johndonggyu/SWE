@@ -19,7 +19,23 @@ $(function() {
         $('.custom-file-label').html(fileName);
     })
     $('.present-btn').click(function(){
-        document.presenter.submit();
+        // check if 등록된 공지사항이 있는지
+        $.ajax({
+            type: 'get',
+            dataType: 'text',
+            url: '/check_notice/' + '{{groupid}}/',
+            success: function(data) {
+                if(data == 'success'){
+                    document.presenter.submit();
+                }else{
+                    alert('등록된 모임일정이 없습니다. 그룹장이 공지 등록 후 신청해주세요.')
+                    return false;
+                }
+            },
+            error: function(err) {
+                console.log('에러!');
+            }
+        });
     })
 });
 </script>
@@ -33,7 +49,7 @@ $(function() {
                     <path d="M40 22H15.66l11.17-11.17L24 8 8 24l16 16 2.83-2.83L15.66 26H40v-4z"></path>
                 </svg>
             </a>
-            <a class="group-setting" href="/gsetting/{{groupid}}/"><img src="/static/img/setting.png" width="55" height="45"></a>
+            {% if group_owner == localuser %}<a class="group-setting" href="/gsetting/{{groupid}}/"><img src="/static/img/setting.png" width="55" height="45"></a>{% endif %}
             <div class="gname">
                 <strong>{{group_title}}</strong>
             </div>
@@ -77,9 +93,10 @@ $(function() {
         </div>
         <div class="card-body" style="text-align: left">
             <p><img src="/static/img/notify.png" width="30" height="30">공지사항</p>
-            <center>
                 <div class="notify">
-                    <span>{{notice.n_date|slice:":11"}} 모임 일정</span>
+                    <div style="text-align: center;">
+                    <span>{% if notice %}{{notice.n_date|slice:":11"}} 모임 일정{% else %}아직 등록된 일정이 없음{% endif %}</span>
+                </div>
                     <div class="notify-content p-2">
                         <table class="notify-contents">
                             <tr>
@@ -108,7 +125,6 @@ $(function() {
                         </table>
                     </div>
                 </div>
-            </center>
         </div>
         <div class="mt-1 ml-3">
             <div class="table-response">

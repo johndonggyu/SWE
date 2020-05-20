@@ -53,9 +53,11 @@ urlpatterns = [
     path('load_content/<int:gid>/', views.load_content, name='load_content'),
     path('chatting/<int:gid>/', views.chatting, name='chatting'),
     path('chat_msg/<int:gid>/', views.chat_msg, name='chat_msg'),
+    path('chat_list/<int:gid>/', views.chat_list, name='chat_list'),
     path('invite/<int:gid>/', views.invite, name='invite'),
     path('present/<int:gid>/', views.present, name='present'),
     path('createvote/<int:gid>/', views.createvote, name='createvote'),
     path('view_items/<int:vid>/', views.view_items, name='view_items'),
-    path('voteit/<int:gid>/<int:vid>/', views.voteit, name='voteit'),
+    path('voteit/', views.voteit, name='voteit'),
+    path('check_notice/<int:gid>/', views.check_notice, name='check_notice'),
 ]

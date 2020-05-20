@@ -4,11 +4,14 @@
 {% block content %}
 <script type="text/javascript">
 $(function() {
+    if ("{{error}}".length != 0){
+        alert("사용자를 찾지 못했습니다.");
+    }
     if ("{{found_userid}}".length != 0) {
-        alert("{{found_userid}}");
+        alert("아이디는 {{found_userid}} 입니다.");
     }
     if ("{{found_passwd}}".length != 0) {
-        alert("{{found_passwd}}");
+        alert("비밀번호는 {{found_passwd}} 입니다.");
     }
     $('.finduserid-btn').click(function() {
         $('#find_userid').val(1);

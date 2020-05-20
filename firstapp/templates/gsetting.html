@@ -2,6 +2,9 @@
 {% extends 'base.html' %}
 {% block title %}Group Setting{% endblock %}
 {% block content %}
+<script src="/static/js/summernote-lite.js"></script>
+<script src="/static/js/summernote-ko-KR.js"></script>
+<link rel="stylesheet" href="/static/css/summernote-lite.css">
 <script type="text/javascript">
 var js_select_region_sido = new Array(
     '서울',
@@ -152,6 +155,24 @@ function js_select_region_select_gugun(select1, select2) {
     return true;
 }
 $(function() {
+    $('#summernote').summernote({
+          height: 300,                 // 에디터 높이
+          minHeight: null,             // 최소 높이
+          maxHeight: null,             // 최대 높이
+          focus: false,                  // 에디터 로딩후 포커스를 맞출지 여부
+          lang: "ko-KR",                    // 한글 설정
+          tabsize: 2,
+          toolbar: [
+            ['style', ['style']],
+            ['font', ['bold','underline','clear']],
+            ['color',['color']],
+            ['para',['ul','al','paragraph']],
+            ['table',['table']],
+            ['insert',['link']],
+          ],
+          codeviewFilter: false,
+          codeviewIframeFilter: true
+    });
     $('.content-save-btn').click(function() {
         var chk = confirm("저장하시겠습니까?");
         if (chk) {
@@ -249,7 +270,7 @@ $(function() {
                 $('.enrolled-list-box').html('<h5 style="margin-top:10px">멤버목록이 비었습니다.</h5><p style="font-size:11px"></p>');
             } else {
                 for (i in response) {
-                    html += "<div class='enrolled-member-" + i + "'><span class='enrolled-name'>" + response[i].name + "</span><input type='checkbox' class='enrolled-input' id='" + response[i].userid + "' name='enrolled_" + i + "'></div>";
+                    html += "<div class='enrolled-member-" + i + "'><span class='enrolled-name'>" + response[i].name + "("+response[i].userid+")"+"</span><input type='checkbox' class='enrolled-input' id='" + response[i].userid + "' name='enrolled_" + i + "'></div>";
                     //console.log(response[i].userid, response[i].name);
                 }
                 $('.enrolled-list-box').html(html);
@@ -282,7 +303,7 @@ $(function() {
                     } else {
                         for (i in response) {
                             //console.log(response[i].userid, response[i].name);
-                            html += "<div class='enrolled-member-" + i + "'><span class='enrolled-name'>" + response[i].name + "</span><input type='checkbox' class='enrolled-input' id='" + response[i].userid + "' name='enrolled_" + i + "'></div>";
+                            html += "<div class='enrolled-member-" + i + "'><span class='enrolled-name'>" + response[i].name + "("+response[i].userid+")"+"</span><input type='checkbox' class='enrolled-input' id='" + response[i].userid + "' name='enrolled_" + i + "'></div>";
                         }
                         $('.enrolled-list-box').html(html);
                     }
@@ -356,7 +377,8 @@ $(function() {
                     $('select[name=glocation]').val(response.group_location).attr("selected", "selected"); //location
                     $('select[name=glocation2]').prepend('<option value="' + response.group_location2 + '">' + response.group_location2 + '</option>')
                     $('select[name=glocation2]').val(response.group_location2).attr("selected", "selected"); //location2
-                    $('textarea[name=gdetails]').val(response.group_details); //details
+                    //$('textarea[name=gdetails]').val(response.group_details); //details
+                    $('.note-editable >p').html(response.group_details)
                 },
                 error: function(xhr, error) {
                     console.log('error');
@@ -479,8 +501,8 @@ $(function() {
                 모임 장소 <select id="sido" name="glocation"></select>
                 <select id="gugun" name="glocation2"></select><br />
                 대표 이미지 <input type="file" name="gimage" style="width:200px;font-size:12px;"><br />
-                <span>그룹 설명 작성(html 태그 사용가능)</span>
-                <textarea name="gdetails" style="width:320px;height:120px;white-space:pre;resize:none;overflow-y:auto;"></textarea>
+                <span>그룹 설명 작성</span>
+                <textarea id="summernote" name="gdetails" style="width:320px;height:120px;white-space:pre;resize:none;overflow-y:auto;"></textarea>
             </form>
         </div>
         <!-- section end -->

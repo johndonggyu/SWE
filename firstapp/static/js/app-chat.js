@@ -48,8 +48,8 @@ $(document).ready(function () {
 
 
     chatContainer.animate({
-      scrollTop: chatContainer[0].scrollHeight
-    }, 400)
+      scrollTop: chatContainer[0].scrollHeight,
+    }, 0)
  
 
   $(window).on("resize", function () {

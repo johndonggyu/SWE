@@ -401,6 +401,7 @@
     z-index: 1;
     text-align: left;
     display: none;
+    overflow-y: auto;
 }
 
 .create-group-layout input {
@@ -815,4 +816,12 @@ cursor: pointer;
 }
 .vitem1-cnt, .vitem2-cnt, .vitem3-cnt{
     float: right;
+}
+
+/* chat */
+.msg-userid{
+    font-size:12px;
+    color:yellow;
+    margin-top:-5px;
+    text-align: center;
 }

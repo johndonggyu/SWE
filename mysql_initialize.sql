@@ -1,4 +1,4 @@
--- drop database app;
+drop database app;
 create database app;
 USE app;
 create table user_table (
@@ -65,7 +65,8 @@ create table vote_table(
     foreign key(groupid) references group_table(groupid) on delete cascade
 );
 create table vitem_table(
-	vitemid int auto_increment primary key,
+	vpk int auto_increment primary key,
+	vitemid int,
     voteid int not null,
     vcontent varchar(100) not null,
     vtotal int not null,

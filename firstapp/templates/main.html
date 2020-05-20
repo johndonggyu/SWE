@@ -3,7 +3,13 @@
 {% block title %}Main{% endblock %}
 {% block goback %}{% endblock %}
 {% block content %}
+<script src="/static/js/summernote-lite.js"></script>
+<script src="/static/js/summernote-ko-KR.js"></script>
+<link rel="stylesheet" href="/static/css/summernote-lite.css">
 <script type="text/javascript">
+    if('{{success}}'.length != 0){
+        alert('{{success}}');
+    }
 	if ('{{error}}'=='1'){
 		$('.main-group-layout').html('<h5 style="margin-top:10px">목록이 비었습니다.</h5><p style="font-size:11px">새로운 그룹을 만들어주세요.</p>');
 	}
@@ -35,7 +41,7 @@ function search(target) {
 					the_btn = '<button class="btn btn-secondary enrolled-group-btn">그룹 메인 보기</button>';
 				}
                 //console.log(data[key].groupid);
-                var html = "<div class='group-info' data-toggle='collapse' href='#collapseDetails" + data[key].groupid + "' role='button' aria-expanded='false' aria-control='collapseDetails" + data[key].groupid + "'><input type='hidden' id='groupid' value='"+data[key].groupid+"'><div class='group-image-small'><img src='/static/img/" + data[key].groupid + "_banner.png'></div><div class='group-details-small'><ul><li class='theme'><div class='theme-img'></div>" + data[key].theme + "/" + data[key].area + "</li><li class='datetime'><div class='datetime-img'></div>" + data[key].group_startdate.substring(5, 10) + "</li><li class='location'><div class='location-img'></div>" + data[key].group_location + "/" + data[key].group_location2.substring(0, 3) + "</li><li class='title'>" + data[key].group_title + "</li></ul></div></div><div class='collapse toggle-group-details' id='collapseDetails" + data[key].groupid + "'><div class='group-info-bar'>상세정보</div><div class='group-details'><div class='group-image'><img src='/static/img/" + data[key].groupid + "_banner.png'></div><div class='group-content'>" + data[key].group_details + "</div></div><div class='main-footer-buttons'><input type='hidden' id='groupid' value='"+data[key].groupid+"'>"+the_btn+"<button class='btn btn-secondary close-details-btn' data-toggle='collapse' data-target='#collapseDetails" + data[key].groupid + "' aria-expanded='false' aria-controls='collapseDetails" + data[key].groupid + "'>상세 정보 닫기</button></div></div><!-- group toggle end --><!-- group list end -->";
+                var html = "<div class='group-info' data-toggle='collapse' href='#collapseDetails" + data[key].groupid + "' role='button' aria-expanded='false' aria-control='collapseDetails" + data[key].groupid + "'><input type='hidden' id='groupid' value='"+data[key].groupid+"'><div class='group-image-small'><img src='/static/img/" + data[key].groupid + "_banner.png'></div><div class='group-details-small'><ul><li class='theme'><div class='theme-img'></div>" + data[key].theme.substring(0, 2) + "/" + data[key].area.substring(0, 2) + "</li><li class='datetime'><div class='datetime-img'></div>" + data[key].group_startdate.substring(5, 10) + "</li><li class='location'><div class='location-img'></div>" + data[key].group_location.substring(0,2) + "/" + data[key].group_location2.substring(0, 2) + "</li><li class='title'>" + data[key].group_title + "</li></ul></div></div><div class='collapse toggle-group-details' id='collapseDetails" + data[key].groupid + "'><div class='group-info-bar'>상세정보</div><div class='group-details'><div class='group-image'><img src='/static/img/" + data[key].groupid + "_banner.png'></div><div class='group-content'>" + data[key].group_details + "</div></div><div class='main-footer-buttons'><input type='hidden' id='groupid' value='"+data[key].groupid+"'>"+the_btn+"<button class='btn btn-secondary close-details-btn' data-toggle='collapse' data-target='#collapseDetails" + data[key].groupid + "' aria-expanded='false' aria-controls='collapseDetails" + data[key].groupid + "'>상세 정보 닫기</button></div></div><!-- group toggle end --><!-- group list end -->";
                 $('.main-group-layout').append(html);
                 $('img').attr('onerror', "this.style.display='none'");
             }
@@ -46,6 +52,25 @@ function search(target) {
     })
 }
 $(function() {
+    $('#summernote').summernote({
+          height: 180,                 // 에디터 높이
+          minHeight: null,             // 최소 높이
+          maxHeight: null,             // 최대 높이
+          focus: false,                  // 에디터 로딩후 포커스를 맞출지 여부
+          lang: "ko-KR",                    // 한글 설정
+          placeholder: '최대 1000자까지 쓸 수 있습니다',    //placeholder 설정
+          tabsize: 2,
+          toolbar: [
+            ['style', ['style']],
+            ['font', ['bold','underline','clear']],
+            ['color',['color']],
+            ['para',['ul','al','paragraph']],
+            ['table',['table']],
+            ['insert',['link']],
+          ],
+          codeviewFilter: false,
+          codeviewIframeFilter: true
+    });
 	$('.enrolled-group-btn').click(function(){
 		var gid = $(this).prev().val();
 		location.replace('/gmain/'+gid);
@@ -73,6 +98,7 @@ $(function() {
 	})
 	if("{{result}}" == "1"){
 		alert("그룹이 성공적으로 생성되었습니다.");
+        document.location.href='/main/';
 	}else if("{{result}}" == "0"){
 		alert("오류가 발생하였습니다.");
 	}else if ("{{result}}" == "2"){
@@ -280,8 +306,8 @@ function js_select_region_select_gugun(select1, select2) {
         	<form method="post" action="/create/" name="create_form" enctype="multipart/form-data">
         	{% csrf_token %}
             제목 <input type="text" name="gtitle" placeholder="제목을 입력하세요." style="width:300px;"><br/>
-            테마 <input type="text" name="gtheme" placeholder="테마를 2글자 입력" maxlength="2" style="width:130px;font-size:13px;">
-            분야 <input type="text" name="garea" placeholder="분야를 2글자 입력" maxlength="2" style="width:130px;font-size:13px;"><br/>
+            테마 <input type="text" name="gtheme" placeholder="테마를 입력" maxlength="10" style="width:130px;font-size:13px;">
+            분야 <input type="text" name="garea" placeholder="분야를 입력" maxlength="10" style="width:130px;font-size:13px;"><br/>
             모임 시작 시간 <input type="date" name="gstartdate"><br/>
             모임 진행 기간 <select type="select" name="gduedate">
             	<option value="1주간">1주간</option>
@@ -297,9 +323,9 @@ function js_select_region_select_gugun(select1, select2) {
             <select id="gugun" name="glocation2"></select><br/>
             대표 이미지 <input type="file" name="gimage" style="width:250px;"><br/>
             <span>아래는 그룹에 대한 설명을 작성하시오.</span>
-            <textarea name="gdetails" style="width:360px;height:283px;white-space:pre;resize:none;"></textarea>
-            <button class="btn btn-secondary gcreate-btn" style="float:left;margin-top:-7px;margin-left: 50px;" onclick="return false;">만들기</button>
-            <button class="btn btn-secondary gcancel-btn" style="float:right;margin-top:-7px;margin-right: 50px;" onclick="return false;">취소</button>
+            <textarea id="summernote" name="gdetails" style="width:360px;height:283px;white-space:pre;resize:none;"></textarea>
+            <button class="btn btn-secondary gcreate-btn" style="float:left;margin-top:5px;margin-left: 50px;" onclick="return false;">만들기</button>
+            <button class="btn btn-secondary gcancel-btn" style="float:right;margin-top:5px;margin-right: 50px;" onclick="return false;">취소</button>
         	</form>
         </div>
         <!-- group layout -->
@@ -346,7 +372,7 @@ function js_select_region_select_gugun(select1, select2) {
                     {% endif %}
                     {% if group.status == 'kicked' %}
                 	<!-- 가입 신청하지 않은 그룹 no-->
-                    <button class="btn btn-secondary join-group-btn" disabled="disabled">가입 신청 하기</button>
+                    <button class="btn btn-secondary join-group-btn" disabled="disabled" style="cursor:default;">가입 신청 하기</button>
                     <!-- endif -->
                     {% endif %}
                     {% if group.status == 'waiting' %}

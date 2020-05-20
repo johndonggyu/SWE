@@ -3,6 +3,7 @@ import pymysql
 from django.http import HttpResponse, JsonResponse
 from config import settings
 from datetime import datetime
+from django.views.decorators.cache import never_cache
 
 # mysql initialize
 connection = pymysql.connect(host='localhost', user ='root', password ='root' ,db ='app')
@@ -22,7 +23,7 @@ def index(req):
 		if req.session['userid'] is None:
 			return redirect('/login')
 		else:
-			return render(req, 'index.html', {'userid':req.session['userid']})
+			return render(req, 'main.html', {'userid':req.session['userid']})
 	except Exception as e:
 		return redirect('/login')	
 
@@ -36,6 +37,7 @@ def enroll(req, gid):
 	else:
 		return HttpResponse('error')
 
+@never_cache
 def main(req):
 	if not checksession(req):
 		return redirect('/login/')
@@ -89,6 +91,7 @@ def main(req):
 	else:
 		return render(req, 'main.html', {'group_list':group_data})
 
+@never_cache
 def search(req, kwd):
 	keyword = kwd.strip()
 	sql = "select groupid,theme,area,group_startdate,group_location,group_location2,group_title,group_details,group_owner from group_table where theme like %s or area like %s or group_startdate like %s or group_location like %s or group_location2 like %s or group_title like %s or group_owner like %s or group_details like %s"
@@ -159,8 +162,12 @@ def create(req):
 		loc1 = req.POST['glocation']
 		loc2 = req.POST['glocation2']
 		detail = req.POST['gdetails']
-
-		_file  = req.FILES['gimage']
+		try:
+			_file  = req.FILES['gimage']
+			fname = _file.name
+		except:
+			fname = ''
+		
 		allowed = ['.bmp','.jpg','.jpeg','.png']
 		if not fname.endswith(tuple(allowed)):
 			result = 2
@@ -189,12 +196,14 @@ def create(req):
 			sql = "insert into member_table values (NULL,%s,%s,%s)"
 			cursor.execute(sql, (gid, userid, 'allowed'))
 			connection.commit()
+			return redirect('/main/')
 		else:
 			result = '0'
-		return render(req, 'main.html', {'result':result})
+			return render(req, 'main.html', {'result':result})
 	else:
 		return render(req, 'main.html')
 
+@never_cache
 def mypage(req):
 	group_data1 = []
 	group_data2 = []
@@ -206,7 +215,7 @@ def mypage(req):
 		sql = "select userid, name, phone, email, alarm from user_table where userid=%s"
 		if cursor.execute(sql, (req.session['userid'])):
 			rows = cursor.fetchone()
-			_userid = rows[0] 
+			_userid = rows[0]
 			_name = rows[1]
 			_phone = rows[2]
 			_email = rows[3]
@@ -238,12 +247,28 @@ def mypage(req):
 			error2 = 1
 		return render(req, 'mypage.html', {'myinfo':myinfo, 'group_list1':group_data1, 'group_list2':group_data2,'error1':error1, 'error2':error2})
 
-def leave2(req, groupid):
+def leave2(req, groupid): # 그룹메인에서의 그룹 탈퇴
 	if not checksession(req):
 		return redirect('/login/')
 	_userid = req.session['userid']
 	_gid = groupid
 	
+	# 그룹장이 자기 그룹에서 탈퇴하는데, 멤버가 하나도 없는 경우
+	sql = "select count(*) from member_table where groupid=%s"
+	cursor.execute(sql, (_gid))
+	row = cursor.fetchone()
+	if row[0] == 1:
+		sql = "select userid from member_table where groupid=%s"
+		cursor.execute(sql, (_gid))
+		row = cursor.fetchone()
+		if row[0] == _userid:
+			sql = "delete from member_table where userid=%s"
+			cursor.execute(sql, (_userid))
+			sql = "delete from group_table where groupid=%s"
+			cursor.execute(sql, (_gid))
+			connection.commit()
+			return HttpResponse('<script>alert("그룹이 삭제되었습니다.");document.location.href="/main/";</script>')
+
 	# 그룹장이 자기의 그룹에서 탈퇴하는 경우
 	sql = "select count(*) from group_table where groupid=%s and group_owner=%s"
 	cursor.execute(sql, (_gid, _userid))
@@ -257,12 +282,28 @@ def leave2(req, groupid):
 	return HttpResponse('<script>alert("탈퇴했습니다.");document.location.href="/main/";</script>')
 
 
-def leave(req, groupid):
+def leave(req, groupid): # 마이페이지에서의 그룹 탈퇴
 	if not checksession(req):
 		return redirect('/login/')
 	_userid = req.session['userid']
 	_gid = groupid
 	
+	# 그룹장이 자기 그룹에서 탈퇴하는데, 멤버가 하나도 없는 경우
+	sql = "select count(*) from member_table where groupid=%s"
+	cursor.execute(sql, (_gid))
+	row = cursor.fetchone()
+	if row[0] == 1:
+		sql = "select userid from member_table where groupid=%s"
+		cursor.execute(sql, (_gid))
+		row = cursor.fetchone()
+		if row[0] == _userid:
+			sql = "delete from member_table where userid=%s"
+			cursor.execute(sql, (_userid))
+			sql = "delete from group_table where groupid=%s"
+			cursor.execute(sql, (_gid))
+			connection.commit()
+			return HttpResponse('그룹이 삭제되었습니다.')
+
 	# 그룹장이 자기의 그룹에서 탈퇴하는 경우
 	sql = "select count(*) from group_table where groupid=%s and group_owner=%s"
 	cursor.execute(sql, (_gid, _userid))
@@ -275,6 +316,7 @@ def leave(req, groupid):
 	connection.commit()
 	return HttpResponse('탈퇴했습니다.')
 
+@never_cache
 def myinfo(req):
 	if not checksession(req):
 		return redirect('/login/')
@@ -343,6 +385,7 @@ def emailalarm(req, tf):
 		connection.commit()
 		return HttpResponse("이메일 수신 변경됨")
 
+@never_cache
 def gsetting(req, gid):
 	if not checksession(req):
 		return redirect('/login/')
@@ -364,6 +407,7 @@ def gsetting(req, gid):
 		notice = ();
 	return render(req, 'gsetting.html', {'gid':gid, 'notice':notice})
 
+@never_cache
 def gset_enrolled(req, gid):
 	_userid = req.session['userid']
 	_gid = gid
@@ -416,7 +460,7 @@ def kick_users(req, gid, uid):
 	_userid = req.session['userid']
 	_gid = gid
 	_uid = uid
-	sql = "update member_table set state=%s where groupid=%s and userid=%s and stats=%s"
+	sql = "update member_table set stats=%s where groupid=%s and userid=%s and stats=%s"
 	if cursor.execute(sql, ('kicked', _gid, _uid, 'allowed')):
 		connection.commit()
 		return HttpResponse('success')
@@ -458,9 +502,11 @@ def save_content(req, gid):
 		detail = req.POST['gdetails']
 
 		img = str(_gid)+"_banner.png"
-		#print(req.FILES['gimage'].name)
-		if len(req.FILES['gimage'].name) != 0:
-			handle_uploaded_file(req.FILES['gimage'], img)
+		
+		# if len(req.FILES['gimage'].name) 에서 NoneType Error 방지
+		if req.FILES.get('gimage'):
+			if len(req.FILES['gimage'].name) != 0:
+				handle_uploaded_file(req.FILES['gimage'], img)
 
 		sql = "update group_table set theme=%s,area=%s,group_startdate=%s,group_duedate=%s,group_location=%s,group_location2=%s,group_title=%s,group_details=%s where group_owner=%s and groupid=%s"
 		ok = cursor.execute(sql, (theme,area,start,due,loc1,loc2,title,detail,userid,_gid))		
@@ -519,6 +565,7 @@ def gset_noticeadd(req,gid):
 
 	return JsonResponse(group_data, safe=False)
 
+@never_cache
 def gmain(req, gid):
 	if not checksession(req):
 		return redirect('/login/')
@@ -556,10 +603,10 @@ def gmain(req, gid):
 		row = cursor.fetchone()
 		row_headers = [x[0] for x in cursor.description]
 		notice = dict(zip(row_headers, row))
-	if notice['n_date'][6] == '월':
-		notice['n_date'] = notice['n_date'][:5]+'0'+notice['n_date'][5:]
+		if notice['n_date'][6] == '월':
+			notice['n_date'] = notice['n_date'][:5]+'0'+notice['n_date'][5:]
 	
-	group_info['notice'] = notice
+		group_info['notice'] = notice
 
 	# 최근 공지사항의 발제자 조회
 	sql = "select u.userid, u.name from present_table as p inner join user_table as u on p.userid=u.userid where p.groupid=%s and p.noticeid=(select max(p.noticeid) from present_table where p.groupid=%s order by p.noticeid desc) order by p.noticeid desc"
@@ -571,44 +618,76 @@ def gmain(req, gid):
 			presenter.append(dict(zip(row_headers, row)))
 		group_info['presenter'] = presenter
 
-	group_info['result'] = result
+	group_info['localuser'] = _userid
+
+	#group_info['result'] = result
 	return render(req, 'gmain.html', group_info)
+
+def check_notice(req, gid):
+	if not checksession(req):
+		return redirect('/login/')
+	_userid = req.session['userid']
+	_gid  = gid
+	sql = "select * from notice_table where groupid=%s"
+	if cursor.execute(sql, (_gid)):
+		return HttpResponse('success')
+	else:
+		return HttpResponse('failed')
 
 def present(req, gid):
 	if not checksession(req):
 		return redirect('/login/')
 	_userid = req.session['userid']
 	_gid = gid
-	_file = req.FILES['file']
+	nofile = 0
 
-	fname = _file.name
-	allowed = ['.txt','.hwp','.doc','.docx','.ppt','.pptx',
-	'.bmp','.jpg','.jpeg','.png','.pdf','.rtf','.tar','.tgz','.xll','.xls',
-	'.zip']
-	if not fname.endswith(tuple(allowed)):
-		# 지원되지 않는 확장자 입니다.
-		return HttpResponse('<script>alert("허용되지 않는 확장장입니다.");document.location.href="/gmain/'+str(_gid)+'/";</script>')
-	dt = str(datetime.now())
-	dtnow = dt[2:4]+dt[5:7]+dt[8:10]+dt[11:13]+dt[14:16]+dt[17:19]+dt[20:26]
-	fname = str(dtnow) + '_' + _userid + '_' + _file.name
-
-	# 파일 업로드 전, 이전 파일은 삭제하고 올리기
-	sql = "select fname from present_table where userid=%s and noticeid=(select noticeid from notice_table where groupid=%s and userid=%s order by noticeid desc limit 1)"
-	if cursor.execute(sql, (_userid, _gid, _userid)):
-		row = cursor.fetchone()
-		sql = "delete from present_table where fname=%s and userid=%s"
-		cursor.execute(sql, (row, _userid))
-		connection.commit()
-
-	if len(_file.name) != 0:
-			handle_uploaded_file2(_file, fname)
-
-	sql = "insert into present_table values (NULL,%s,(select noticeid from notice_table where groupid=%s order by noticeid desc limit 1),%s,%s)"
-	if cursor.execute(sql, (_gid, _gid, _userid, fname)):
-		connection.commit()
+	# 공지사항이 한 개라도 없으면 에러!
+	sql = "select * from notice_table where groupid=%s"
+	if cursor.execute(sql, (_gid)):
+		pass
 	else:
-		return HttpResponse('<script>alert("오류입니다.");document.location.href="/gmain/'+str(_gid)+'/";</script>')
+		return redirect('/gmain/'+str(_gid)+'/')
 
+	if req.FILES.get('file'):
+		_file = req.FILES['file']
+		fname = _file.name
+	else:
+		nofile = 1
+	if nofile == 0:
+		allowed = ['.txt','.hwp','.doc','.docx','.ppt','.pptx',
+		'.bmp','.jpg','.jpeg','.png','.pdf','.rtf','.tar','.tgz','.xll','.xls',
+		'.zip']
+		if not fname.endswith(tuple(allowed)):
+			# 지원되지 않는 확장자 입니다.
+			return HttpResponse('<script>alert("허용되지 않는 확장장입니다.");document.location.href="/gmain/'+str(_gid)+'/";</script>')
+		dt = str(datetime.now())
+		dtnow = dt[2:4]+dt[5:7]+dt[8:10]+dt[11:13]+dt[14:16]+dt[17:19]+dt[20:26]
+		fname = str(dtnow) + '_' + _userid + '_' + _file.name
+
+		# 파일 업로드 전, 이전 파일은 삭제하고 올리기
+		sql = "select fname from present_table where userid=%s and noticeid=(select noticeid from notice_table where groupid=%s and userid=%s order by noticeid desc limit 1)"
+		if cursor.execute(sql, (_userid, _gid, _userid)):
+			row = cursor.fetchone()
+			sql = "delete from present_table where fname=%s and userid=%s"
+			cursor.execute(sql, (row, _userid))
+			connection.commit()
+		else:
+			return HttpResponse('<script>alert("등록된 일정이 없습니다.");return false;</script>')
+
+		if len(_file.name) != 0:
+				handle_uploaded_file2(_file, fname)
+
+		sql = "insert into present_table values (NULL,%s,(select noticeid from notice_table where groupid=%s order by noticeid desc limit 1),%s,%s)"
+		if cursor.execute(sql, (_gid, _gid, _userid, fname)):
+			connection.commit()
+		else:
+			return HttpResponse('<script>alert("오류입니다.");document.location.href="/gmain/'+str(_gid)+'/";</script>')
+	else: # if nofile = 1
+		sql = "insert into present_table values (NULL,%s,(select noticeid from notice_table where groupid=%s order by noticeid desc limit 1),%s,NULL)"
+		if cursor.execute(sql, (_gid, _gid, _userid)):
+			connection.commit()
+		else:
+			return HttpResponse('<script>alert("오류입니다.");document.location.href="/gmain/'+str(_gid)+'/";</script>')
 	return HttpResponse('<script>alert("발제자로 신청되었습니다.");document.location.href="/gmain/'+str(_gid)+'/";</script>')
 
 def invite(req, gid):
@@ -653,9 +732,9 @@ def createvote(req, gid):
 		sql = "insert into vote_table values (1,%s,%s,%s)"
 		cursor.execute(sql, (_gid,_title,_date))
 		connection.commit()
-		sql1 = "insert into vitem_table values (NULL,1,%s,0)"
-		sql2 = "insert into vitem_table values (NULL,1,%s,0)"
-		sql3 = "insert into vitem_table values (NULL,1,%s,0)"
+		sql1 = "insert into vitem_table values (NULL,1,1,%s,0)"
+		sql2 = "insert into vitem_table values (NULL,2,1,%s,0)"
+		sql3 = "insert into vitem_table values (NULL,3,1,%s,0)"
 		cursor.execute(sql1,(_item1))
 		cursor.execute(sql2,(_item2))
 		cursor.execute(sql3,(_item3))
@@ -668,9 +747,9 @@ def createvote(req, gid):
 		sql = "insert into vote_table values (%s,%s,%s,%s)"
 		cursor.execute(sql, (cnt,_gid,_title,_date))
 		connection.commit()
-		sql1 = "insert into vitem_table values (NULL,%s,%s,0)"
-		sql2 = "insert into vitem_table values (NULL,%s,%s,0)"
-		sql3 = "insert into vitem_table values (NULL,%s,%s,0)"
+		sql1 = "insert into vitem_table values (NULL,1,%s,%s,0)"
+		sql2 = "insert into vitem_table values (NULL,2,%s,%s,0)"
+		sql3 = "insert into vitem_table values (NULL,3,%s,%s,0)"
 		cursor.execute(sql1,(cnt,_item1))
 		cursor.execute(sql2,(cnt,_item2))
 		cursor.execute(sql3,(cnt,_item3))
@@ -678,6 +757,7 @@ def createvote(req, gid):
 
 	return HttpResponse('<script>alert("투표가 개설되었습니다.");document.location.href="/chatting/'+str(_gid)+'/";</script>')
 
+@never_cache
 def chatting(req, gid):
 	if not checksession(req):
 		return redirect('/login/')
@@ -710,6 +790,22 @@ def chatting(req, gid):
 	}
 	return render(req, 'chat.html', data)
 
+def chat_list(req, gid):
+	if not checksession(req):
+		return redirect('/login/')
+	_userid = req.session['userid']
+	_gid = gid
+	sql = "select * from message_table where groupid=%s"
+	cursor.execute(sql, (_gid))
+	rows = cursor.fetchall()
+	row_headers = [x[0] for x in cursor.description]
+	chat_list = []
+	for result in rows:
+		chat_list.append(dict(zip(row_headers, result)))
+
+	return JsonResponse(chat_list, safe=False)
+
+@never_cache
 def view_items(req, vid):
 	if not checksession(req):
 		return redirect('/login/')
@@ -721,17 +817,19 @@ def view_items(req, vid):
 	item_list = []
 	for row in rows:
 		item_list.append(dict(zip(row_headers, row)))
+	print(item_list)
 	return JsonResponse(item_list, safe=False)
 
-def voteit(req, gid, vid):
+def voteit(req):
 	if not checksession(req):
 		return redirect('/login/')
 	_userid = req.session['userid']
-	_gid = gid
-	_vid = vid
-	_item1 = req.GET['item1']
-	_item2 = req.GET['item2']
-	_item3 = req.GET['item3']
+	_gid = req.POST['gid']
+	_vid = req.POST['vid']
+	_item1 = req.POST['item1']
+	_item2 = req.POST['item2']
+	_item3 = req.POST['item3']
+
 	if _item1 == '1':
 		sql1 = "update vitem_table set vtotal=vtotal+1 where voteid=%s and vitemid=1"
 		cursor.execute(sql1, (_vid))
@@ -744,8 +842,9 @@ def voteit(req, gid, vid):
 		sql3 = "update vitem_table set vtotal=vtotal+1 where voteid=%s and vitemid=3"
 		cursor.execute(sql3, (_vid))
 		connection.commit()
-	return redirect('/main/')
+	return HttpResponse('<script>alert("투표가 완료되었습니다.");document.location.href="/chatting/'+str(_gid)+'/";</script>');
 
+@never_cache
 def chat_msg(req, gid):
 	if not checksession(req):
 		return redirect('/login/')
@@ -767,8 +866,8 @@ def logout(req):
 def login(req):
 	if req.method == "GET":
 		try:
-			if not req.session['userid']:
-				return redirect('/main')
+			if req.session['userid']:
+				return redirect('/main/')
 		except Exception as e:
 			pass
 
@@ -782,7 +881,7 @@ def login(req):
 			_userid = row[0]
 			if str(row[1]) == "None":
 				req.session['userid'] = _userid
-				return redirect('/main/')
+				return HttpResponse('<script>alert("안녕하세요. '+_userid+'님!");document.location.href="/main/";</script>')
 			else:
 				_leave_date = row[1]
 				return render(req, 'registration/login.html', {'error':'탈퇴한 회원입니다.'})
@@ -871,29 +970,37 @@ def findaccount(req):
 			# with tel
 			if auth_method == 'tel':
 				sql = 'select userid from user_table where name=(%s) and phone=(%s)'
-				cursor.execute(sql, (name, tel))
-				found_userid = cursor.fetchone()[0]
-				return render(req, 'registration/findaccount.html', {'found_userid': found_userid})
+				if cursor.execute(sql, (name, tel)):
+					found_userid = cursor.fetchone()[0]
+					return render(req, 'registration/findaccount.html', {'found_userid': found_userid})
+				else:
+					return render(req, 'registration/findaccount.html', {'error': '사용자를 찾지못했습니다.'})
 			# with email
 			if auth_method == 'email':
 				sql = 'select userid from user_table where name=(%s) and email=(%s)'
-				cursor.execute(sql, (name, email))
-				found_userid = cursor.fetchone()[0]
-				return render(req, 'registration/findaccount.html', {'found_userid': found_userid})
+				if cursor.execute(sql, (name, email)):
+					found_userid = cursor.fetchone()[0]
+					return render(req, 'registration/findaccount.html', {'found_userid': found_userid})
+				else:
+					return render(req, 'registration/findaccount.html', {'error': '사용자를 찾지못했습니다.'})
 		# find password
 		elif find_userid == '0' and find_passwd == '1':
 			# with tel
 			if auth_method == 'tel':
 				sql = 'select passwd from user_table where userid=(%s) and name=(%s) and phone=(%s)'
-				cursor.execute(sql, (userid, name, tel))
-				found_passwd = cursor.fetchone()[0]
-				return render(req, 'registration/findaccount.html', {'found_passwd': found_passwd})
+				if cursor.execute(sql, (userid, name, tel)):
+					found_passwd = cursor.fetchone()[0]
+					return render(req, 'registration/findaccount.html', {'found_passwd': found_passwd})
+				else:
+					return render(req, 'registration/findaccount.html', {'error': '사용자를 찾지못했습니다.'})
 			# with email
 			if auth_method == 'email':
 				sql = 'select passwd from user_table where userid=(%s) and name=(%s) and email=(%s)'
-				cursor.execute(sql, (userid, name, email))
-				found_passwd = cursor.fetchone()[0]
-				return render(req, 'registration/findaccount.html', {'found_passwd': found_passwd})
+				if cursor.execute(sql, (userid, name, email)):
+					found_passwd = cursor.fetchone()[0]
+					return render(req, 'registration/findaccount.html', {'found_passwd': found_passwd})
+				else:
+					return render(req, 'registration/findaccount.html', {'error': '사용자를 찾지못했습니다.'})
 
 		return render(req, 'registration/findaccount.html')
 	else:
